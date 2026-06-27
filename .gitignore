@@ -1,0 +1,22 @@
+# Rust build artifacts
+target/
+peerrent-contract/target/
+smart-contract/target/
+
+# Node
+node_modules/
+app/node_modules/
+app/.next/
+
+# Env
+.env
+.env.local
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
