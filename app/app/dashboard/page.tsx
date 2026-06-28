@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import toast from "react-hot-toast"
 import { Listing, Rental } from "@/lib/types"
 
 export default function DashboardPage() {
@@ -34,6 +35,21 @@ export default function DashboardPage() {
       // silently fail
     } finally {
       setLoadingListings(false)
+    }
+  }
+
+  async function toggleAvailability(listingId: string, currentlyAvailable: boolean) {
+    try {
+      const res = await fetch(`/api/listings/${listingId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ owner_id: userId, is_available: !currentlyAvailable }),
+      })
+      if (!res.ok) throw new Error("Failed to update")
+      toast.success(currentlyAvailable ? "Listing unlisted" : "Listing relisted!")
+      fetchListings(userId!)
+    } catch {
+      toast.error("Failed to update listing")
     }
   }
 
@@ -137,12 +153,24 @@ export default function DashboardPage() {
                       {listing.is_available ? "Available" : "Rented out"}
                     </span>
                   </p>
-                  <Link
-                    href={`/item/${listing.id}`}
-                    className="mt-3 block text-center text-xs py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
-                  >
-                    View Listing
-                  </Link>
+                  <div className="mt-3 flex gap-2">
+                    <Link
+                      href={`/edit/${listing.id}`}
+                      className="flex-1 text-center text-xs py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      onClick={() => toggleAvailability(listing.id, listing.is_available)}
+                      className={`flex-1 text-xs py-1.5 rounded-lg border transition-colors ${
+                        listing.is_available
+                          ? "border-red-800 text-red-400 hover:bg-red-950/30"
+                          : "border-emerald-800 text-emerald-400 hover:bg-emerald-950/30"
+                      }`}
+                    >
+                      {listing.is_available ? "Unlist" : "Relist"}
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}

@@ -8,6 +8,7 @@ interface RentModalProps {
   listingId: string
   pricePerDay: number
   depositAmount: number
+  ownerId: string
 }
 
 const CSPR_USD_FALLBACK = 0.02
@@ -16,6 +17,7 @@ export default function RentModal({
   listingId,
   pricePerDay,
   depositAmount,
+  ownerId,
 }: RentModalProps) {
   const router = useRouter()
   const [open, setOpen] = useState(false)
@@ -94,6 +96,14 @@ export default function RentModal({
       >
         Sign in to rent this item
       </a>
+    )
+  }
+
+  if (userId === ownerId) {
+    return (
+      <div className="w-full py-3 rounded-lg bg-gray-900 border border-gray-800 text-gray-500 text-sm font-semibold flex items-center justify-center">
+        This is your listing
+      </div>
     )
   }
 
