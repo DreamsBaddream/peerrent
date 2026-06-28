@@ -55,13 +55,16 @@ export default function DashboardPage() {
     return (
       <div className="max-w-4xl mx-auto px-4 py-24 text-center">
         <p className="text-gray-400 text-lg">
-          Please sign up to access your dashboard.
+          Sign in to see your rentals and listings.
+        </p>
+        <p className="text-gray-600 text-sm mt-1">
+          Use the same phone number to restore your account.
         </p>
         <Link
           href="/signup"
           className="mt-4 inline-block px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors"
         >
-          Sign Up
+          Sign In
         </Link>
       </div>
     )
@@ -189,6 +192,16 @@ export default function DashboardPage() {
                   >
                     {rental.status}
                   </span>
+                  {rental.tx_hash && (
+                    <a
+                      href={`https://testnet.cspr.live/deploy/${rental.tx_hash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-xs text-emerald-500 hover:text-emerald-400 font-mono mt-0.5"
+                    >
+                      {rental.tx_hash.slice(0, 12)}… ↗
+                    </a>
+                  )}
                 </div>
                 {rental.status === "active" && (
                   <Link

@@ -47,7 +47,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
       return
     }
 
-    const userId = localStorage.getItem("user_id")
     setLoading(true)
     try {
       const form = new FormData()

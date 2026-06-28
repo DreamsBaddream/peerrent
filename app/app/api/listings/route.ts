@@ -42,9 +42,9 @@ export async function POST(req: Request) {
     const casper_item_id = (formData.get("casper_item_id") as string) || null
     const photos = formData.getAll("photos") as File[]
 
-    if (!title || !description || isNaN(price_per_day) || isNaN(deposit_amount) || !owner_id) {
+    if (!title || isNaN(price_per_day) || isNaN(deposit_amount) || !owner_id) {
       return Response.json(
-        { error: "title, description, price_per_day, deposit_amount, and owner_id are required" },
+        { error: "title, price_per_day, deposit_amount, and owner_id are required" },
         { status: 400 }
       )
     }
@@ -97,12 +97,15 @@ export async function POST(req: Request) {
     }
 
     const itemId = data.id
-    // Register item on-chain (best effort — non-blocking)
+    // Register item on-chain and persist the deploy hash
     const depositMotes = Math.round(deposit_amount * 1_000_000_000).toString()
     const dailyRateMotes = Math.round(price_per_day * 1_000_000_000).toString()
-    void listItemOnChain(itemId, depositMotes, dailyRateMotes)
+    const deployHash = await listItemOnChain(itemId, depositMotes, dailyRateMotes)
+    if (deployHash) {
+      await supabase.from("listings").update({ casper_item_id: deployHash }).eq("id", itemId)
+    }
 
-    return Response.json({ listingId: itemId })
+    return Response.json({ listingId: itemId, deployHash })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to create listing"
     return Response.json({ error: message }, { status: 500 })

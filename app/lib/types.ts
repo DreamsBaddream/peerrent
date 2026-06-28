@@ -21,6 +21,7 @@ export interface Rental {
   after_photos: string[]
   status: "active" | "returned" | "disputed"
   damage_detected: boolean | null
+  tx_hash: string | null
   created_at: string
 }
 

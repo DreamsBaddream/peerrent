@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server"
 import { supabase } from "@/lib/supabase"
-import { withX402, x402Server, rentalPaymentConfig } from "@/lib/x402"
 import { rentItemOnChain } from "@/lib/casper-contract"
 
 export async function GET(req: Request) {
@@ -29,7 +28,7 @@ export async function GET(req: Request) {
   }
 }
 
-async function postHandler(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const { listingId, startDate, endDate, renterWallet, renterId, txHash } =
       await req.json()
@@ -123,17 +122,17 @@ async function postHandler(req: NextRequest) {
       console.error("Failed to mark listing unavailable:", updateError.message)
     }
 
-    // Lock deposit on-chain (best effort — non-blocking)
+    // Lock deposit on-chain and persist the deploy hash
     const depositMotes = Math.round((listing.deposit_amount ?? 0) * 1_000_000_000).toString()
-    void rentItemOnChain(listingId, rentalDays, depositMotes)
+    const txHash = await rentItemOnChain(listingId, rentalDays, depositMotes)
+    if (txHash) {
+      await supabase.from("rentals").update({ tx_hash: txHash }).eq("id", rental.id)
+    }
 
-    return Response.json({ rentalId: rental.id, rentalDays })
+    return Response.json({ rentalId: rental.id, rentalDays, txHash })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to create rental"
     return Response.json({ error: message }, { status: 500 })
   }
 }
 
-// Wrap with x402: requires 1 CSPR payment on casper-testnet before creating a rental
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const POST = withX402(postHandler as any, rentalPaymentConfig, x402Server)

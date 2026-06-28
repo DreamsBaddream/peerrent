@@ -38,7 +38,7 @@ export default function ItemCard({
             {title}
           </h3>
           <p className="text-emerald-400 text-sm font-medium">
-            ${price_per_day} / day
+            {price_per_day} CSPR / day
           </p>
           <p className="text-gray-500 text-xs">
             Deposit: {deposit_amount} CSPR

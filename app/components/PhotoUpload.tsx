@@ -8,6 +8,7 @@ interface PhotoUploadProps {
 
 export default function PhotoUpload({ onChange }: PhotoUploadProps) {
   const [previews, setPreviews] = useState<string[]>([])
+  const allFilesRef = useRef<File[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
 
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -15,8 +16,9 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
     if (!files.length) return
 
     const urls = files.map((f) => URL.createObjectURL(f))
+    allFilesRef.current = [...allFilesRef.current, ...files]
     setPreviews((prev) => [...prev, ...urls])
-    onChange(files)
+    onChange(allFilesRef.current)
   }
 
   return (
