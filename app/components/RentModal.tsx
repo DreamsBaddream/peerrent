@@ -24,9 +24,11 @@ export default function RentModal({
   const [loading, setLoading] = useState(false)
   const [publicKey, setPublicKey] = useState<string | null>(null)
   const [csprUsd, setCsprUsd] = useState<number>(CSPR_USD_FALLBACK)
+  const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
     setPublicKey(localStorage.getItem("casper_public_key"))
+    setUserId(localStorage.getItem("user_id"))
     fetch("https://api.coingecko.com/api/v3/simple/price?ids=casper-network&vs_currencies=usd")
       .then((r) => r.json())
       .then((d) => {
@@ -55,13 +57,6 @@ export default function RentModal({
       return
     }
 
-    const userId = localStorage.getItem("user_id")
-    if (!userId) {
-      toast.error("Please sign up first")
-      router.push("/signup")
-      return
-    }
-
     setLoading(true)
     try {
       const res = await fetch("/api/rent", {
@@ -69,7 +64,7 @@ export default function RentModal({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listingId,
-          renterId: userId,
+          renterId: userId!,
           startDate,
           endDate,
           renterWallet: publicKey,
@@ -89,6 +84,17 @@ export default function RentModal({
     } finally {
       setLoading(false)
     }
+  }
+
+  if (!userId) {
+    return (
+      <a
+        href="/signup"
+        className="w-full py-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-400 text-sm font-semibold transition-colors flex items-center justify-center hover:border-emerald-500 hover:text-emerald-400"
+      >
+        Sign in to rent this item
+      </a>
+    )
   }
 
   return (

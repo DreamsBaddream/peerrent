@@ -124,12 +124,12 @@ export async function POST(req: NextRequest) {
 
     // Lock deposit on-chain and persist the deploy hash
     const depositMotes = Math.round((listing.deposit_amount ?? 0) * 1_000_000_000).toString()
-    const txHash = await rentItemOnChain(listingId, rentalDays, depositMotes)
-    if (txHash) {
-      await supabase.from("rentals").update({ tx_hash: txHash }).eq("id", rental.id)
+    const deployHash = await rentItemOnChain(listingId, rentalDays, depositMotes)
+    if (deployHash) {
+      await supabase.from("rentals").update({ tx_hash: deployHash }).eq("id", rental.id)
     }
 
-    return Response.json({ rentalId: rental.id, rentalDays, txHash })
+    return Response.json({ rentalId: rental.id, rentalDays, txHash: deployHash })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to create rental"
     return Response.json({ error: message }, { status: 500 })
