@@ -3,13 +3,14 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
-import { createPaymentFetch } from "@/lib/x402-client"
 
 interface RentModalProps {
   listingId: string
   pricePerDay: number
   depositAmount: number
 }
+
+const CSPR_USD_FALLBACK = 0.02
 
 export default function RentModal({
   listingId,
@@ -22,9 +23,17 @@ export default function RentModal({
   const [endDate, setEndDate] = useState("")
   const [loading, setLoading] = useState(false)
   const [publicKey, setPublicKey] = useState<string | null>(null)
+  const [csprUsd, setCsprUsd] = useState<number>(CSPR_USD_FALLBACK)
 
   useEffect(() => {
     setPublicKey(localStorage.getItem("casper_public_key"))
+    fetch("https://api.coingecko.com/api/v3/simple/price?ids=casper-network&vs_currencies=usd")
+      .then((r) => r.json())
+      .then((d) => {
+        const price = d?.["casper-network"]?.usd
+        if (typeof price === "number" && price > 0) setCsprUsd(price)
+      })
+      .catch(() => {})
   }, [])
 
   const days =
@@ -55,9 +64,7 @@ export default function RentModal({
 
     setLoading(true)
     try {
-      // x402: payment-aware fetch — automatically handles 402 → Casper Wallet → retry
-      const payFetch = createPaymentFetch()
-      const res = await payFetch("/api/rent", {
+      const res = await fetch("/api/rent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -130,17 +137,32 @@ export default function RentModal({
                 <div className="bg-gray-800 rounded-lg p-3 space-y-1 text-sm">
                   <div className="flex justify-between text-gray-400">
                     <span>
-                      {days} day{days !== 1 ? "s" : ""} x ${pricePerDay}
+                      {days} day{days !== 1 ? "s" : ""} × {pricePerDay} CSPR
                     </span>
-                    <span>${days * pricePerDay}</span>
+                    <div className="text-right">
+                      <span>{days * pricePerDay} CSPR</span>
+                      <span className="block text-xs text-gray-500">
+                        ~${(days * pricePerDay * csprUsd).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex justify-between text-gray-400">
                     <span>Deposit</span>
-                    <span>{depositAmount} CSPR</span>
+                    <div className="text-right">
+                      <span>{depositAmount} CSPR</span>
+                      <span className="block text-xs text-gray-500">
+                        ~${(depositAmount * csprUsd).toFixed(2)}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex justify-between text-white font-semibold pt-1 border-t border-gray-700">
                     <span>Total</span>
-                    <span>{total} CSPR</span>
+                    <div className="text-right">
+                      <span>{total} CSPR</span>
+                      <span className="block text-xs text-gray-400 font-normal">
+                        ~${(total * csprUsd).toFixed(2)} USD
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}

@@ -118,6 +118,9 @@ export async function POST(req: Request) {
 
     // Settle deposit on-chain: release to renter if no damage, send to owner if damaged
     const casperHash = await returnItemOnChain(rental.listing_id, damageDetected)
+    if (casperHash) {
+      await supabase.from("rentals").update({ tx_hash: casperHash }).eq("id", rentalId)
+    }
 
     return Response.json({
       damageDetected,

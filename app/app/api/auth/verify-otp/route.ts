@@ -3,9 +3,9 @@ import { supabase } from "@/lib/supabase"
 
 export async function POST(req: Request) {
   try {
-    const { phone, code } = await req.json()
+    const { phone, otp } = await req.json()
 
-    if (!phone || !code) {
+    if (!phone || !otp) {
       return Response.json(
         { error: "Phone and code are required" },
         { status: 400 }
@@ -21,12 +21,12 @@ export async function POST(req: Request) {
       )
       const verificationCheck = await client.verify.v2
         .services(process.env.TWILIO_VERIFY_SERVICE_SID!)
-        .verificationChecks.create({ to: phone, code })
+        .verificationChecks.create({ to: phone, code: otp })
 
       if (verificationCheck.status !== "approved") {
         return Response.json({ error: "Invalid or expired OTP" }, { status: 400 })
       }
-    } else if (code !== "000000") {
+    } else if (otp !== "000000") {
       return Response.json({ error: "Dev mode: use code 000000" }, { status: 400 })
     }
 

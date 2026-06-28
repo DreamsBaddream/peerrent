@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 
@@ -14,9 +14,20 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [userId, setUserId] = useState<string | null>(null)
   const [streaming, setStreaming] = useState(false)
+  const [cameraError, setCameraError] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
+
+  useEffect(() => {
+    if (step === "selfie") {
+      setCameraError(false)
+      startCamera()
+    }
+    return () => {
+      if (step !== "selfie") stopCamera()
+    }
+  }, [step])
 
   // Step 1: Send OTP
   async function handleSendOtp(e: React.FormEvent) {
@@ -65,7 +76,6 @@ export default function SignupPage() {
         localStorage.setItem("user_id", id)
       }
       toast.success("Phone verified!")
-      await startCamera()
       setStep("selfie")
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Verification failed")
@@ -80,11 +90,13 @@ export default function SignupPage() {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       streamRef.current = stream
       setStreaming(true)
+      setCameraError(false)
       if (videoRef.current) {
         videoRef.current.srcObject = stream
       }
     } catch {
-      toast.error("Camera access denied")
+      setCameraError(true)
+      toast.error("Camera access denied — click Retry or allow camera in your browser settings")
     }
   }
 
@@ -122,6 +134,10 @@ export default function SignupPage() {
           const err = await res.json().catch(() => ({}))
           throw new Error(err.error ?? "Liveness check failed")
         }
+        const data = await res.json()
+        if (!data.isLive) {
+          throw new Error(data.reason ?? "Liveness check failed — please try again")
+        }
         toast.success("Identity verified! Welcome to PeerRent.")
         stopCamera()
         router.push("/")
@@ -137,9 +153,9 @@ export default function SignupPage() {
     <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white">Create Account</h1>
+          <h1 className="text-3xl font-bold text-white">Sign In</h1>
           <p className="mt-2 text-gray-400 text-sm">
-            Verify your identity to start renting
+            New here? We&apos;ll create your account automatically.
           </p>
         </div>
 
@@ -171,6 +187,9 @@ export default function SignupPage() {
           {/* Step 1: Phone */}
           {step === "phone" && (
             <form onSubmit={handleSendOtp} className="space-y-4">
+              <div className="bg-amber-950/40 border border-amber-800/50 rounded-lg px-3 py-2 text-xs text-amber-400">
+                Demo mode — any phone number works. OTP code is <span className="font-mono font-bold">000000</span>.
+              </div>
               <div>
                 <label className="block text-gray-400 text-sm mb-1">
                   Phone Number
@@ -249,8 +268,20 @@ export default function SignupPage() {
                   }}
                 />
                 {!streaming && (
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm">
-                    Loading camera...
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-sm">
+                    {cameraError ? (
+                      <>
+                        <p className="text-red-400">Camera access denied</p>
+                        <button
+                          onClick={startCamera}
+                          className="px-4 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-xs transition-colors"
+                        >
+                          Retry
+                        </button>
+                      </>
+                    ) : (
+                      <p className="text-gray-500">Loading camera...</p>
+                    )}
                   </div>
                 )}
               </div>
