@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     }
 
     // Verify the rater was a party to this rental
-    const listing = rental.listing as { owner_id: string } | null
+    const listing = (Array.isArray(rental.listing) ? rental.listing[0] : rental.listing) as { owner_id: string } | null
     const ownerId = listing?.owner_id
     const isOwner = ownerId === raterId
     const isRenter = rental.renter_id === raterId

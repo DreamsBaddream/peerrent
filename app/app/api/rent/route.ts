@@ -1,4 +1,6 @@
+import { NextRequest } from "next/server"
 import { supabase } from "@/lib/supabase"
+import { withX402, x402Server, rentalPaymentConfig } from "@/lib/x402"
 
 export async function GET(req: Request) {
   try {
@@ -26,7 +28,7 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+async function postHandler(req: NextRequest) {
   try {
     const { listingId, startDate, endDate, renterWallet, renterId, txHash } =
       await req.json()
@@ -126,3 +128,7 @@ export async function POST(req: Request) {
     return Response.json({ error: message }, { status: 500 })
   }
 }
+
+// Wrap with x402: requires 1 CSPR payment on casper-testnet before creating a rental
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const POST = withX402(postHandler as any, rentalPaymentConfig, x402Server)
