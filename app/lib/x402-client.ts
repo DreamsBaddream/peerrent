@@ -2,21 +2,21 @@
 
 import { x402Client } from "@x402/core/client"
 import { wrapFetchWithPayment } from "@x402/fetch"
-import { makeCsprTransferDeploy, Deploy } from "casper-js-sdk"
+import { NativeTransferBuilder, PublicKey, AccountHash } from "casper-js-sdk"
 
 interface PaymentAccept {
   maxAmountRequired: string
-  payTo: string
+  payTo: string // "00" + 64-hex account hash (Casper x402 format)
   scheme?: string
   network?: string
 }
 
-// Casper-specific x402 scheme client: signs a CSPR transfer via Casper Wallet
 const casperSchemeClient = {
   async createPaymentPayload(requirements: { accepts?: PaymentAccept[] } & PaymentAccept) {
     const publicKeyHex = localStorage.getItem("casper_public_key")
     if (!publicKeyHex) throw new Error("Casper Wallet not connected")
-    if (!window.casperWallet) throw new Error("Casper Wallet extension not found")
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!(window as any).casperWallet) throw new Error("Casper Wallet extension not found")
 
     const accept: PaymentAccept = Array.isArray(requirements.accepts)
       ? requirements.accepts[0]
@@ -25,26 +25,33 @@ const casperSchemeClient = {
     const amountMotes = accept.maxAmountRequired
     const payTo = accept.payTo
 
-    // Build a native CSPR transfer deploy using the SDK helper
-    const deploy: Deploy = makeCsprTransferDeploy({
-      senderPublicKeyHex: publicKeyHex,
-      recipientPublicKeyHex: payTo,
-      transferAmount: amountMotes,
-      paymentAmount: "100000000", // 0.1 CSPR gas
-      chainName: "casper-test",
-    })
+    const senderPublicKey = PublicKey.fromHex(publicKeyHex)
 
-    const deployJson = JSON.stringify(Deploy.toJSON(deploy))
-    const { signature, cancelled } = await window.casperWallet.sign(deployJson, publicKeyHex)
+    // payTo is "00" + 64-hex — strip the "00" prefix for AccountHash.fromString
+    const rawHash = payTo.startsWith("00") ? payTo.slice(2) : payTo
+    const recipientAccountHash = AccountHash.fromString(`account-hash-${rawHash}`)
+
+    const transaction = new NativeTransferBuilder()
+      .from(senderPublicKey)
+      .targetAccountHash(recipientAccountHash)
+      .amount(amountMotes)
+      .id(Date.now())
+      .chainName("casper-test")
+      .payment(100_000_000) // 0.1 CSPR gas
+      .build()
+
+    const txJson = JSON.stringify(transaction.toJSON())
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { signature, cancelled } = await (window as any).casperWallet.sign(txJson, publicKeyHex)
 
     if (cancelled) throw new Error("User cancelled the Casper Wallet payment")
 
     return {
       x402Version: 1 as const,
       scheme: "exact",
-      network: "casper-testnet",
+      network: "casper:casper-test",
       payload: {
-        deployHash: deploy.hash,
+        transactionHash: transaction.hash.toHex(),
         signature,
         senderPublicKey: publicKeyHex,
         recipientAddress: payTo,
@@ -54,14 +61,12 @@ const casperSchemeClient = {
   },
 }
 
-// Build a v1 x402 client with Casper testnet scheme registered
 export function createCasperX402Client() {
   const client = new x402Client()
-  client.registerV1("casper-testnet", casperSchemeClient as never)
+  client.registerV1("casper:casper-test", casperSchemeClient as never)
   return client
 }
 
-// Drop-in fetch replacement: catches 402 → triggers Casper Wallet → retries
 export function createPaymentFetch() {
   const client = createCasperX402Client()
   return wrapFetchWithPayment(fetch, client)

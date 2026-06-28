@@ -4,7 +4,7 @@ import { withX402 } from "@x402/next"
 
 function buildServer() {
   const facilitator = new HTTPFacilitatorClient({
-    url: process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator",
+    url: process.env.X402_FACILITATOR_URL || "https://x402-facilitator.cspr.cloud",
   })
   return new x402ResourceServer(facilitator)
 }
@@ -12,11 +12,10 @@ function buildServer() {
 export const x402Server = buildServer()
 
 // 1 CSPR expressed in motes (1 CSPR = 1,000,000,000 motes)
-// network format is "scheme:network" per x402 v2 spec
 export const rentalPaymentConfig: RouteConfig = {
   accepts: {
     scheme: "exact",
-    network: "cspr:testnet" as `${string}:${string}`,
+    network: "casper:casper-test" as `${string}:${string}`,
     price: "1000000000",
     payTo: process.env.CASPER_WALLET_ADDRESS || "",
   },

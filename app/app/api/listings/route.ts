@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { listItemOnChain } from "@/lib/casper-contract"
 
 export async function GET(req: Request) {
   try {
@@ -95,7 +96,13 @@ export async function POST(req: Request) {
       return Response.json({ error: error.message }, { status: 500 })
     }
 
-    return Response.json({ listingId: data.id })
+    const itemId = data.id
+    // Register item on-chain (best effort — non-blocking)
+    const depositMotes = Math.round(deposit_amount * 1_000_000_000).toString()
+    const dailyRateMotes = Math.round(price_per_day * 1_000_000_000).toString()
+    void listItemOnChain(itemId, depositMotes, dailyRateMotes)
+
+    return Response.json({ listingId: itemId })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to create listing"
     return Response.json({ error: message }, { status: 500 })
