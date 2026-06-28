@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase"
+import { returnItemOnChain } from "@/lib/casper-contract"
 
 export async function POST(req: Request) {
   try {
@@ -115,13 +116,16 @@ export async function POST(req: Request) {
         .eq("id", rental.listing_id)
     }
 
+    // Settle deposit on-chain: release to renter if no damage, send to owner if damaged
+    const casperHash = await returnItemOnChain(rental.listing_id, damageDetected)
+
     return Response.json({
       damageDetected,
       reason: damageReason,
       severity: damageSeverity,
       rentalId,
-      // Frontend should trigger Casper deposit release/hold based on damageDetected
       releaseDeposit: !damageDetected,
+      casperTxHash: casperHash,
     })
   } catch (error: unknown) {
     const message =

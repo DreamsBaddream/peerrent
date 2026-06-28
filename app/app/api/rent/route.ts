@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server"
 import { supabase } from "@/lib/supabase"
 import { withX402, x402Server, rentalPaymentConfig } from "@/lib/x402"
+import { rentItemOnChain } from "@/lib/casper-contract"
 
 export async function GET(req: Request) {
   try {
@@ -43,7 +44,7 @@ async function postHandler(req: NextRequest) {
     // Validate listing exists and is available
     const { data: listing, error: listingError } = await supabase
       .from("listings")
-      .select("id, is_available, owner_id, photos")
+      .select("id, is_available, owner_id, photos, deposit_amount")
       .eq("id", listingId)
       .single()
 
@@ -121,6 +122,10 @@ async function postHandler(req: NextRequest) {
     if (updateError) {
       console.error("Failed to mark listing unavailable:", updateError.message)
     }
+
+    // Lock deposit on-chain (best effort — non-blocking)
+    const depositMotes = Math.round((listing.deposit_amount ?? 0) * 1_000_000_000).toString()
+    void rentItemOnChain(listingId, rentalDays, depositMotes)
 
     return Response.json({ rentalId: rental.id, rentalDays })
   } catch (error: unknown) {
