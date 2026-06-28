@@ -43,25 +43,27 @@ export default function Navbar() {
           {!verified ? (
             <Link
               href="/signup"
-              className="text-sm text-gray-400 hover:text-white transition-colors"
+              className="text-sm px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-colors"
             >
               Sign In
             </Link>
           ) : (
-            <button
-              onClick={() => {
-                localStorage.removeItem("user_id")
-                localStorage.removeItem("casper_public_key")
-                sessionStorage.setItem("wallet_disconnected", "1")
-                setVerified(false)
-                window.location.href = "/"
-              }}
-              className="text-sm text-gray-400 hover:text-red-400 transition-colors"
-            >
-              Sign Out
-            </button>
+            <>
+              <WalletButton />
+              <button
+                onClick={() => {
+                  localStorage.removeItem("user_id")
+                  localStorage.removeItem("casper_public_key")
+                  sessionStorage.setItem("wallet_disconnected", "1")
+                  setVerified(false)
+                  window.location.href = "/"
+                }}
+                className="text-sm text-gray-400 hover:text-red-400 transition-colors"
+              >
+                Sign Out
+              </button>
+            </>
           )}
-          <WalletButton />
         </div>
       </div>
     </nav>

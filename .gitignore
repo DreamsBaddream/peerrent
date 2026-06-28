@@ -20,3 +20,12 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Claude Code meta files
+CLAUDE.md
+AGENTS.md
+CONTEXT.md
+**/CLAUDE.md
+**/AGENTS.md
+**/CONTEXT.md
+**/stages/
