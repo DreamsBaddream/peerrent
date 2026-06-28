@@ -1,12 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import PhotoUpload from "@/components/PhotoUpload"
 
 export default function ListPage() {
   const router = useRouter()
+
+  useEffect(() => {
+    if (!localStorage.getItem("user_id")) {
+      toast.error("Sign in to list an item")
+      router.replace("/signup")
+    }
+  }, [])
+
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [pricePerDay, setPricePerDay] = useState("")
