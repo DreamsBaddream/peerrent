@@ -7,6 +7,10 @@ declare global {
     casperWallet?: {
       requestConnection: () => Promise<void>
       getActivePublicKey: () => Promise<string>
+      sign: (
+        deployJson: string,
+        publicKeyHex: string
+      ) => Promise<{ signature: string; cancelled: boolean }>
     }
   }
 }

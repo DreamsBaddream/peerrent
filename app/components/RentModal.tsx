@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { createPaymentFetch } from "@/lib/x402-client"
 
 interface RentModalProps {
   listingId: string
@@ -54,7 +55,9 @@ export default function RentModal({
 
     setLoading(true)
     try {
-      const res = await fetch("/api/rent", {
+      // x402: payment-aware fetch — automatically handles 402 → Casper Wallet → retry
+      const payFetch = createPaymentFetch()
+      const res = await payFetch("/api/rent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
