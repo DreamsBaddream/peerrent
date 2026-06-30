@@ -6,6 +6,12 @@ import toast from "react-hot-toast"
 
 type Step = "phone" | "otp" | "selfie"
 
+const STEPS: { key: Step; label: string }[] = [
+  { key: "phone",  label: "Phone"    },
+  { key: "otp",   label: "Verify"   },
+  { key: "selfie", label: "Identity" },
+]
+
 export default function SignupPage() {
   const router = useRouter()
   const [step, setStep] = useState<Step>("phone")
@@ -29,7 +35,6 @@ export default function SignupPage() {
     }
   }, [step])
 
-  // Step 1: Send OTP
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault()
     if (!phone.trim()) return
@@ -54,7 +59,6 @@ export default function SignupPage() {
     }
   }
 
-  // Step 2: Verify OTP
   async function handleVerifyOtp(e: React.FormEvent) {
     e.preventDefault()
     if (otp.length !== 6) return
@@ -73,7 +77,6 @@ export default function SignupPage() {
       const id = data.userId ?? data.user_id ?? data.id ?? null
       if (id) {
         setUserId(id)
-        localStorage.setItem("user_id", id)
       }
       toast.success("Phone verified!")
       setStep("selfie")
@@ -84,19 +87,16 @@ export default function SignupPage() {
     }
   }
 
-  // Camera helpers
   async function startCamera() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       streamRef.current = stream
       setStreaming(true)
       setCameraError(false)
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream
-      }
+      if (videoRef.current) videoRef.current.srcObject = stream
     } catch {
       setCameraError(true)
-      toast.error("Camera access denied — click Retry or allow camera in your browser settings")
+      toast.error("Camera access denied — allow camera in your browser settings")
     }
   }
 
@@ -110,34 +110,25 @@ export default function SignupPage() {
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video || !canvas) return
-
     canvas.width = video.videoWidth
     canvas.height = video.videoHeight
     canvas.getContext("2d")?.drawImage(video, 0, 0)
 
     canvas.toBlob(async (blob) => {
-      if (!blob) {
-        toast.error("Failed to capture photo")
-        return
-      }
+      if (!blob) { toast.error("Failed to capture photo"); return }
       setLoading(true)
       try {
         const form = new FormData()
         form.append("selfie", blob, "selfie.jpg")
         if (userId) form.append("user_id", userId)
-
-        const res = await fetch("/api/auth/liveness", {
-          method: "POST",
-          body: form,
-        })
+        const res = await fetch("/api/auth/liveness", { method: "POST", body: form })
         if (!res.ok) {
           const err = await res.json().catch(() => ({}))
           throw new Error(err.error ?? "Liveness check failed")
         }
         const data = await res.json()
-        if (!data.isLive) {
-          throw new Error(data.reason ?? "Liveness check failed — please try again")
-        }
+        if (!data.isLive) throw new Error(data.reason ?? "Liveness check failed — please try again")
+        if (userId) localStorage.setItem("user_id", userId)
         toast.success("Identity verified! Welcome to PeerRent.")
         stopCamera()
         router.push("/")
@@ -149,49 +140,69 @@ export default function SignupPage() {
     }, "image/jpeg")
   }
 
+  const stepIdx = STEPS.findIndex((s) => s.key === step)
+
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-white">Sign In</h1>
-          <p className="mt-2 text-gray-400 text-sm">
-            New here? We&apos;ll create your account automatically.
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl font-bold text-white mb-2">
+            {step === "phone" ? "Get started" : step === "otp" ? "Verify your number" : "One last step"}
+          </h1>
+          <p className="text-white/40 text-sm">
+            {step === "phone"
+              ? "New here? We’ll create your account automatically."
+              : step === "otp"
+              ? `We sent a 6-digit code to ${phone}`
+              : "Take a quick selfie to confirm you’re real."}
           </p>
         </div>
 
-        {/* Step indicators */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {(["phone", "otp", "selfie"] as Step[]).map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
-                  step === s
-                    ? "bg-emerald-500 text-white"
-                    : s === "phone" ||
-                        (s === "otp" && step !== "phone") ||
-                        s === "selfie" && step === "selfie"
-                      ? "bg-emerald-900 text-emerald-400"
-                      : "bg-gray-800 text-gray-600"
-                }`}
-              >
-                {i + 1}
+        {/* Step tracker */}
+        <div className="flex items-center justify-center mb-8">
+          {STEPS.map((s, i) => (
+            <div key={s.key} className="flex items-center">
+              <div className={`flex flex-col items-center gap-1.5 transition-opacity duration-300 ${i <= stepIdx ? "opacity-100" : "opacity-30"}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                  i < stepIdx
+                    ? "bg-gradient-to-br from-emerald-400 to-cyan-400 text-[#030712]"
+                    : i === stepIdx
+                    ? "bg-gradient-to-br from-emerald-400 to-cyan-400 text-[#030712] ring-4 ring-emerald-400/20"
+                    : "glass text-white/40"
+                }`}>
+                  {i < stepIdx ? (
+                    <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 6.5l2.5 2.5 5-5" />
+                    </svg>
+                  ) : i + 1}
+                </div>
+                <span className="text-xs text-white/35 hidden sm:block">{s.label}</span>
               </div>
-              {i < 2 && (
-                <div className="w-8 h-px bg-gray-800" />
+              {i < STEPS.length - 1 && (
+                <div className={`w-16 h-px mx-2 mb-5 transition-colors duration-500 ${
+                  i < stepIdx
+                    ? "bg-gradient-to-r from-emerald-400 to-cyan-400"
+                    : "bg-white/[0.08]"
+                }`} />
               )}
             </div>
           ))}
         </div>
 
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
-          {/* Step 1: Phone */}
+        {/* Card */}
+        <div className="card rounded-2xl p-6">
+
+          {/* Phone step */}
           {step === "phone" && (
             <form onSubmit={handleSendOtp} className="space-y-4">
-              <div className="bg-amber-950/40 border border-amber-800/50 rounded-lg px-3 py-2 text-xs text-amber-400">
-                Demo mode — any phone number works. OTP code is <span className="font-mono font-bold">000000</span>.
+              <div className="px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-400/80 mb-5">
+                Demo mode — any phone number works. OTP code is{" "}
+                <span className="font-mono font-bold text-amber-400">000000</span>
               </div>
               <div>
-                <label className="block text-gray-400 text-sm mb-1">
+                <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider font-medium">
                   Phone Number
                 </label>
                 <input
@@ -200,25 +211,25 @@ export default function SignupPage() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-emerald-500"
+                  className="field w-full rounded-xl px-4 py-3 text-sm"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || !phone.trim()}
-                className="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors disabled:opacity-50"
+                className="w-full py-3 rounded-xl btn-gradient text-sm"
               >
-                {loading ? "Sending..." : "Send OTP"}
+                {loading ? "Sending…" : "Continue"}
               </button>
             </form>
           )}
 
-          {/* Step 2: OTP */}
+          {/* OTP step */}
           {step === "otp" && (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div>
-                <label className="block text-gray-400 text-sm mb-1">
-                  Enter 6-digit code sent to {phone}
+                <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider font-medium">
+                  6-Digit Code
                 </label>
                 <input
                   type="text"
@@ -226,37 +237,32 @@ export default function SignupPage() {
                   maxLength={6}
                   placeholder="000000"
                   value={otp}
-                  onChange={(e) =>
-                    setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
+                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   required
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm tracking-widest text-center focus:outline-none focus:border-emerald-500"
+                  className="field w-full rounded-xl px-4 py-4 text-3xl tracking-[0.6em] text-center font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors disabled:opacity-50"
+                className="w-full py-3 rounded-xl btn-gradient text-sm"
               >
-                {loading ? "Verifying..." : "Verify"}
+                {loading ? "Verifying…" : "Verify Code"}
               </button>
               <button
                 type="button"
                 onClick={() => setStep("phone")}
-                className="w-full text-gray-500 hover:text-gray-400 text-xs transition-colors"
+                className="w-full text-white/30 hover:text-white/60 text-xs transition-colors"
               >
                 Change phone number
               </button>
             </form>
           )}
 
-          {/* Step 3: Selfie */}
+          {/* Selfie step */}
           {step === "selfie" && (
             <div className="space-y-4">
-              <p className="text-gray-400 text-sm text-center">
-                Take a quick selfie for liveness verification
-              </p>
-              <div className="relative bg-gray-800 rounded-lg overflow-hidden aspect-video">
+              <div className="relative bg-black rounded-2xl overflow-hidden aspect-video">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -267,20 +273,24 @@ export default function SignupPage() {
                     ;(e.target as HTMLVideoElement).play()
                   }}
                 />
+                {/* Face guide */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-28 h-36 rounded-full border-2 border-white/25 border-dashed" />
+                </div>
                 {!streaming && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-sm">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-sm">
                     {cameraError ? (
                       <>
-                        <p className="text-red-400">Camera access denied</p>
+                        <p className="text-red-400 text-xs">Camera access denied</p>
                         <button
                           onClick={startCamera}
-                          className="px-4 py-1.5 rounded-lg bg-gray-700 hover:bg-gray-600 text-white text-xs transition-colors"
+                          className="px-4 py-1.5 rounded-lg glass text-white text-xs hover:bg-white/[0.08] transition-colors"
                         >
                           Retry
                         </button>
                       </>
                     ) : (
-                      <p className="text-gray-500">Loading camera...</p>
+                      <p className="text-white/35 text-xs">Starting camera…</p>
                     )}
                   </div>
                 )}
@@ -289,9 +299,9 @@ export default function SignupPage() {
               <button
                 onClick={handleCaptureSelfie}
                 disabled={loading || !streaming}
-                className="w-full py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors disabled:opacity-50"
+                className="w-full py-3 rounded-xl btn-gradient text-sm"
               >
-                {loading ? "Checking..." : "Capture & Verify"}
+                {loading ? "Verifying…" : "Capture Selfie"}
               </button>
             </div>
           )}
