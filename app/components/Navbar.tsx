@@ -12,7 +12,7 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className="sticky top-0 z-50 glass border-b border-white/[0.06]">
+    <nav className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#030712]/80 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
 
         {/* Logo */}

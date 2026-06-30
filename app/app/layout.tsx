@@ -30,15 +30,18 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-gray-950 text-white">
+      <body className="min-h-full flex flex-col bg-[#030712] text-white">
         <Navbar />
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: "#111827",
+              background: "rgba(5, 8, 22, 0.95)",
+              backdropFilter: "blur(20px)",
               color: "#f9fafb",
-              border: "1px solid #1f2937",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              borderRadius: "12px",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
             },
           }}
         />

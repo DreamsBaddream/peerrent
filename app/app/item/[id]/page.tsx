@@ -1,5 +1,6 @@
 import RentModal from "@/components/RentModal"
 import { Listing } from "@/lib/types"
+import Link from "next/link"
 
 async function getListing(id: string): Promise<Listing | null> {
   try {
@@ -21,100 +22,109 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
 
   if (!listing) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <p className="text-gray-400 text-lg">Item not found.</p>
-        <a
-          href="/"
-          className="mt-4 inline-block text-emerald-400 hover:text-emerald-300 text-sm"
-        >
-          Back to Browse
-        </a>
+      <div className="max-w-4xl mx-auto px-4 py-32 text-center">
+        <p className="text-white/35 text-lg mb-4">Item not found.</p>
+        <Link href="/" className="text-sm gradient-text hover:opacity-75 transition-opacity">
+          ← Back to Browse
+        </Link>
       </div>
     )
   }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
+      {/* Back */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/65 text-sm mb-8 transition-colors"
+      >
+        <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10 3L5 8l5 5" />
+        </svg>
+        Browse
+      </Link>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Photos */}
         <div className="space-y-3">
-          {listing.photos.length > 0 ? (
-            <>
-              <div className="aspect-[4/3] bg-gray-800 rounded-xl overflow-hidden">
-                <img
-                  src={listing.photos[0]}
-                  alt={listing.title}
-                  className="w-full h-full object-cover"
-                />
+          <div className="aspect-[4/3] bg-white/[0.03] rounded-2xl overflow-hidden card">
+            {listing.photos.length > 0 ? (
+              <img
+                src={listing.photos[0]}
+                alt={listing.title}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-white/20 text-sm">
+                No photos
               </div>
-              {listing.photos.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {listing.photos.slice(1).map((photo, i) => (
-                    <img
-                      key={i}
-                      src={photo}
-                      alt={`${listing.title} photo ${i + 2}`}
-                      className="w-20 h-20 object-cover rounded-lg border border-gray-700 flex-shrink-0"
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="aspect-[4/3] bg-gray-800 rounded-xl flex items-center justify-center text-gray-600">
-              No photos
+            )}
+          </div>
+          {listing.photos.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {listing.photos.slice(1).map((photo, i) => (
+                <img
+                  key={i}
+                  src={photo}
+                  alt={`${listing.title} ${i + 2}`}
+                  className="w-20 h-20 object-cover rounded-xl border border-white/[0.07] flex-shrink-0 hover:border-emerald-400/30 transition-colors"
+                />
+              ))}
             </div>
           )}
         </div>
 
         {/* Info */}
         <div className="space-y-6">
+          {/* Availability badge + title + price */}
           <div>
-            <h1 className="text-3xl font-bold text-white">{listing.title}</h1>
-            <div className="flex items-baseline gap-3 mt-2">
-              <span className="text-2xl font-semibold text-emerald-400">
-                {listing.price_per_day} CSPR
-              </span>
-              <span className="text-gray-500 text-sm">/ day</span>
+            <div className={`inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full mb-3 ${
+              listing.is_available
+                ? "bg-emerald-400/10 text-emerald-400"
+                : "bg-red-400/10 text-red-400"
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${listing.is_available ? "bg-emerald-400" : "bg-red-400"}`} />
+              {listing.is_available ? "Available to rent" : "Currently rented"}
+            </div>
+
+            <h1 className="text-3xl font-bold text-white leading-tight mb-3">
+              {listing.title}
+            </h1>
+
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-bold gradient-text">{listing.price_per_day}</span>
+              <span className="text-white/30 text-sm">CSPR / day</span>
             </div>
           </div>
 
+          {/* Description */}
           {listing.description && (
             <div>
-              <h2 className="text-gray-400 text-xs uppercase tracking-wider font-semibold mb-2">
+              <h2 className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3">
                 Description
               </h2>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                {listing.description}
-              </p>
+              <p className="text-white/55 text-sm leading-relaxed">{listing.description}</p>
             </div>
           )}
 
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4 space-y-2">
+          {/* Price breakdown */}
+          <div className="card rounded-2xl p-5 space-y-3">
+            <h3 className="text-xs font-semibold text-white/35 uppercase tracking-wider">Pricing</h3>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Daily rate</span>
-              <span className="text-white font-medium">
-                {listing.price_per_day} CSPR
-              </span>
+              <span className="text-white/45">Daily rate</span>
+              <span className="text-white font-medium">{listing.price_per_day} CSPR</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Security deposit</span>
-              <span className="text-white font-medium">
-                {listing.deposit_amount} CSPR
-              </span>
+              <span className="text-white/45">Security deposit</span>
+              <span className="text-white font-medium">{listing.deposit_amount} CSPR</span>
             </div>
-            <div className="flex justify-between text-sm pt-1 border-t border-gray-800">
-              <span className="text-gray-400">Status</span>
-              <span
-                className={
-                  listing.is_available ? "text-emerald-400" : "text-red-400"
-                }
-              >
-                {listing.is_available ? "Available" : "Not available"}
-              </span>
-            </div>
+            <div className="h-px bg-white/[0.06]" />
+            <p className="text-xs text-white/25">
+              Deposit locked on-chain via Casper smart contract. Released after AI damage check.
+            </p>
           </div>
 
+          {/* Rent action */}
           {listing.is_available && (
             <RentModal
               listingId={listing.id}

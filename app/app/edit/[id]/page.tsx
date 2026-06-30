@@ -73,93 +73,99 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-24 text-center text-gray-500 text-sm">
-        Loading...
+      <div className="max-w-2xl mx-auto px-4 py-24">
+        <div className="card rounded-2xl h-96 animate-pulse" />
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Edit Listing</h1>
-        <p className="mt-2 text-gray-400 text-sm">Update your listing details.</p>
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-white mb-2">Edit Listing</h1>
+        <p className="text-white/40 text-sm">Update your listing details.</p>
       </div>
 
-      <form
-        onSubmit={handleSave}
-        className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5"
-      >
-        <div>
-          <label className="block text-gray-300 text-sm font-medium mb-1">
-            Title <span className="text-red-400">*</span>
-          </label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-300 text-sm font-medium mb-1">
-            Description
-          </label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={4}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500 resize-none"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSave} className="space-y-4">
+        <div className="card rounded-2xl p-5 space-y-4">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Details</p>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-1">
-              Price per Day (CSPR) <span className="text-red-400">*</span>
+            <label className="block text-xs text-white/45 mb-1.5 font-medium">
+              Title <span className="text-red-400">*</span>
             </label>
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={pricePerDay}
-              onChange={(e) => setPricePerDay(e.target.value)}
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500"
+              className="field w-full rounded-xl px-4 py-3 text-sm"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-1">
-              Deposit Amount (CSPR) <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
-              required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm focus:outline-none focus:border-emerald-500"
+            <label className="block text-xs text-white/45 mb-1.5 font-medium">Description</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="field w-full rounded-xl px-4 py-3 text-sm resize-none"
             />
           </div>
         </div>
 
-        <div className="flex gap-3 pt-2">
+        <div className="card rounded-2xl p-5">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Pricing</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-white/45 mb-1.5 font-medium">
+                Price / Day <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={pricePerDay}
+                  onChange={(e) => setPricePerDay(e.target.value)}
+                  required
+                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">CSPR</span>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-white/45 mb-1.5 font-medium">
+                Deposit <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  required
+                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">CSPR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 py-2.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 text-sm transition-colors"
+            className="flex-1 py-3 rounded-xl glass text-white/45 hover:text-white text-sm transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors disabled:opacity-50"
+            className="flex-1 py-3 rounded-xl btn-gradient text-sm"
           >
-            {saving ? "Saving..." : "Save Changes"}
+            {saving ? "Saving…" : "Save Changes"}
           </button>
         </div>
       </form>

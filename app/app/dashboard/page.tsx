@@ -69,60 +69,66 @@ export default function DashboardPage() {
 
   if (!userId) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-24 text-center">
-        <p className="text-gray-400 text-lg">
-          Sign in to see your rentals and listings.
-        </p>
-        <p className="text-gray-600 text-sm mt-1">
-          Use the same phone number to restore your account.
-        </p>
-        <Link
-          href="/signup"
-          className="mt-4 inline-block px-6 py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors"
-        >
-          Sign In
-        </Link>
+      <div className="max-w-md mx-auto px-4 py-32 text-center">
+        <div className="card rounded-2xl p-10">
+          <div className="w-14 h-14 rounded-full glass flex items-center justify-center mx-auto mb-5">
+            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white/30" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+            </svg>
+          </div>
+          <p className="text-white font-semibold mb-1">Sign in to continue</p>
+          <p className="text-white/35 text-sm mb-6">
+            View your listings and active rentals.
+          </p>
+          <Link href="/signup" className="inline-block px-6 py-3 rounded-xl btn-gradient text-sm">
+            Sign In
+          </Link>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12 space-y-12">
+    <div className="max-w-6xl mx-auto px-4 py-12 space-y-14">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-        <Link
-          href="/list"
-          className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-sm transition-colors"
-        >
-          + List New Item
+        <div>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="text-white/35 text-sm mt-0.5">Manage your listings and rentals</p>
+        </div>
+        <Link href="/list" className="px-4 py-2.5 rounded-xl btn-gradient text-sm">
+          + List Item
         </Link>
       </div>
 
       {/* My Listings */}
       <section>
-        <h2 className="text-xl font-semibold text-white mb-4">My Listings</h2>
+        <div className="flex items-center gap-4 mb-6">
+          <h2 className="text-xs font-semibold text-white/45 uppercase tracking-wider">My Listings</h2>
+          <div className="flex-1 h-px bg-white/[0.05]" />
+          {!loadingListings && (
+            <span className="text-xs text-white/20">{listings.length} item{listings.length !== 1 ? "s" : ""}</span>
+          )}
+        </div>
+
         {loadingListings ? (
-          <div className="text-gray-500 text-sm">Loading...</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card rounded-2xl h-52 animate-pulse" />
+            ))}
+          </div>
         ) : listings.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
-            <p className="text-gray-500 text-sm">
-              You haven&apos;t listed anything yet.
-            </p>
-            <Link
-              href="/list"
-              className="mt-3 inline-block text-emerald-400 hover:text-emerald-300 text-sm"
-            >
-              Create your first listing
+          <div className="card rounded-2xl p-10 text-center">
+            <p className="text-white/35 text-sm mb-1">No listings yet.</p>
+            <Link href="/list" className="text-xs gradient-text hover:opacity-80 transition-opacity">
+              Create your first listing →
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing) => (
-              <div
-                key={listing.id}
-                className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden"
-              >
-                <div className="aspect-[16/9] bg-gray-800 overflow-hidden">
+              <div key={listing.id} className="card rounded-2xl overflow-hidden">
+                <div className="aspect-[16/9] bg-white/[0.03]">
                   {listing.photos?.[0] ? (
                     <img
                       src={listing.photos[0]}
@@ -130,33 +136,27 @@ export default function DashboardPage() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-600 text-xs">
+                    <div className="w-full h-full flex items-center justify-center text-white/15 text-xs">
                       No photo
                     </div>
                   )}
                 </div>
-                <div className="p-4">
-                  <p className="text-white text-sm font-semibold truncate">
-                    {listing.title}
-                  </p>
-                  <p className="text-emerald-400 text-xs mt-1">
-                    {listing.price_per_day} CSPR / day
-                  </p>
-                  <p className="text-xs mt-1">
-                    <span
-                      className={
-                        listing.is_available
-                          ? "text-emerald-400"
-                          : "text-red-400"
-                      }
-                    >
-                      {listing.is_available ? "Available" : "Rented out"}
+                <div className="p-4 border-t border-white/[0.05]">
+                  <p className="text-white text-sm font-semibold truncate mb-1.5">{listing.title}</p>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="gradient-text text-sm font-bold">{listing.price_per_day} CSPR</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      listing.is_available
+                        ? "bg-emerald-400/10 text-emerald-400"
+                        : "bg-red-400/10 text-red-400"
+                    }`}>
+                      {listing.is_available ? "Available" : "Rented"}
                     </span>
-                  </p>
-                  <div className="mt-3 flex gap-2">
+                  </div>
+                  <div className="flex gap-2">
                     <Link
                       href={`/edit/${listing.id}`}
-                      className="flex-1 text-center text-xs py-1.5 rounded-lg border border-gray-700 text-gray-400 hover:text-white hover:border-gray-600 transition-colors"
+                      className="flex-1 text-center text-xs py-1.5 rounded-lg glass text-white/45 hover:text-white transition-colors"
                     >
                       Edit
                     </Link>
@@ -164,8 +164,8 @@ export default function DashboardPage() {
                       onClick={() => toggleAvailability(listing.id, listing.is_available)}
                       className={`flex-1 text-xs py-1.5 rounded-lg border transition-colors ${
                         listing.is_available
-                          ? "border-red-800 text-red-400 hover:bg-red-950/30"
-                          : "border-emerald-800 text-emerald-400 hover:bg-emerald-950/30"
+                          ? "border-red-500/20 text-red-400 hover:bg-red-500/10"
+                          : "border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
                       }`}
                     >
                       {listing.is_available ? "Unlist" : "Relist"}
@@ -180,19 +180,25 @@ export default function DashboardPage() {
 
       {/* My Rentals */}
       <section>
-        <h2 className="text-xl font-semibold text-white mb-4">My Rentals</h2>
+        <div className="flex items-center gap-4 mb-6">
+          <h2 className="text-xs font-semibold text-white/45 uppercase tracking-wider">My Rentals</h2>
+          <div className="flex-1 h-px bg-white/[0.05]" />
+          {!loadingRentals && (
+            <span className="text-xs text-white/20">{rentals.length} rental{rentals.length !== 1 ? "s" : ""}</span>
+          )}
+        </div>
+
         {loadingRentals ? (
-          <div className="text-gray-500 text-sm">Loading...</div>
+          <div className="space-y-3">
+            {[1, 2].map((i) => (
+              <div key={i} className="card rounded-2xl h-20 animate-pulse" />
+            ))}
+          </div>
         ) : rentals.length === 0 ? (
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-8 text-center">
-            <p className="text-gray-500 text-sm">
-              You haven&apos;t rented anything yet.
-            </p>
-            <Link
-              href="/"
-              className="mt-3 inline-block text-emerald-400 hover:text-emerald-300 text-sm"
-            >
-              Browse items to rent
+          <div className="card rounded-2xl p-10 text-center">
+            <p className="text-white/35 text-sm mb-1">No rentals yet.</p>
+            <Link href="/" className="text-xs gradient-text hover:opacity-80 transition-opacity">
+              Browse items to rent →
             </Link>
           </div>
         ) : (
@@ -200,32 +206,32 @@ export default function DashboardPage() {
             {rentals.map((rental) => (
               <div
                 key={rental.id}
-                className="bg-gray-900 border border-gray-800 rounded-xl p-4 flex items-center justify-between"
+                className="card rounded-2xl px-5 py-4 flex items-center justify-between"
               >
                 <div className="space-y-1">
-                  <p className="text-white text-sm font-medium">
-                    Rental #{rental.id.slice(0, 8)}
-                  </p>
-                  <p className="text-gray-500 text-xs">
-                    {rental.start_date} to {rental.end_date}
-                  </p>
-                  <span
-                    className={`inline-block text-xs px-2 py-0.5 rounded-full ${
+                  <div className="flex items-center gap-3">
+                    <p className="text-white text-sm font-medium font-mono">
+                      #{rental.id.slice(0, 8)}
+                    </p>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
                       rental.status === "active"
-                        ? "bg-emerald-900/50 text-emerald-400"
+                        ? "bg-emerald-400/10 text-emerald-400"
                         : rental.status === "returned"
-                          ? "bg-gray-800 text-gray-400"
-                          : "bg-red-900/50 text-red-400"
-                    }`}
-                  >
-                    {rental.status}
-                  </span>
+                        ? "bg-white/[0.06] text-white/35"
+                        : "bg-red-400/10 text-red-400"
+                    }`}>
+                      {rental.status}
+                    </span>
+                  </div>
+                  <p className="text-white/30 text-xs">
+                    {rental.start_date} → {rental.end_date}
+                  </p>
                   {rental.tx_hash && (
                     <a
                       href={`https://testnet.cspr.live/deploy/${rental.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-xs text-emerald-500 hover:text-emerald-400 font-mono mt-0.5"
+                      className="block text-xs text-emerald-400/60 hover:text-emerald-400 font-mono transition-colors"
                     >
                       {rental.tx_hash.slice(0, 12)}… ↗
                     </a>
@@ -234,7 +240,7 @@ export default function DashboardPage() {
                 {rental.status === "active" && (
                   <Link
                     href={`/return/${rental.id}`}
-                    className="px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold text-xs transition-colors"
+                    className="px-4 py-2 rounded-xl btn-gradient text-xs"
                   >
                     Return Item
                   </Link>
