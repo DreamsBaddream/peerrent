@@ -24,19 +24,12 @@ export default function ListPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-
     const userId = localStorage.getItem("user_id")
-    if (!userId) {
-      toast.error("Please sign up first")
-      router.push("/signup")
-      return
-    }
-
+    if (!userId) { toast.error("Please sign up first"); router.push("/signup"); return }
     if (!title || !pricePerDay || !depositAmount) {
       toast.error("Please fill in all required fields")
       return
     }
-
     setLoading(true)
     try {
       const form = new FormData()
@@ -46,17 +39,11 @@ export default function ListPage() {
       form.append("deposit_amount", depositAmount)
       form.append("owner_id", userId)
       photos.forEach((f) => form.append("photos", f))
-
-      const res = await fetch("/api/listings", {
-        method: "POST",
-        body: form,
-      })
-
+      const res = await fetch("/api/listings", { method: "POST", body: form })
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err.error ?? "Failed to create listing")
       }
-
       toast.success("Listing created!")
       router.push("/dashboard")
     } catch (err: unknown) {
@@ -68,90 +55,102 @@ export default function ListPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">List an Item</h1>
-        <p className="mt-2 text-gray-400">
-          Share your gear and earn CSPR when others rent it.
+      {/* Header */}
+      <div className="mb-10">
+        <h1 className="text-3xl font-bold text-white mb-2">List an Item</h1>
+        <p className="text-white/40 text-sm">
+          Share your gear and earn CSPR every time it&apos;s rented.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-900 border border-gray-800 rounded-xl p-6 space-y-5"
-      >
-        <div>
-          <label className="block text-gray-300 text-sm font-medium mb-1">
-            Title <span className="text-red-400">*</span>
-          </label>
-          <input
-            type="text"
-            placeholder="e.g. Canon EOS R5 Camera"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-emerald-500"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-300 text-sm font-medium mb-1">
-            Description
-          </label>
-          <textarea
-            placeholder="Describe the item, condition, what's included..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            rows={4}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-emerald-500 resize-none"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Details */}
+        <div className="card rounded-2xl p-5 space-y-4">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Details</p>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-1">
-              Price per Day (CSPR) <span className="text-red-400">*</span>
+            <label className="block text-xs text-white/45 mb-1.5 font-medium">
+              Title <span className="text-red-400">*</span>
             </label>
             <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="10"
-              value={pricePerDay}
-              onChange={(e) => setPricePerDay(e.target.value)}
+              type="text"
+              placeholder="e.g. Canon EOS R5 Camera"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
               required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-emerald-500"
+              className="field w-full rounded-xl px-4 py-3 text-sm"
             />
           </div>
           <div>
-            <label className="block text-gray-300 text-sm font-medium mb-1">
-              Deposit Amount (CSPR) <span className="text-red-400">*</span>
-            </label>
-            <input
-              type="number"
-              min="0"
-              step="0.01"
-              placeholder="50"
-              value={depositAmount}
-              onChange={(e) => setDepositAmount(e.target.value)}
-              required
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2.5 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-emerald-500"
+            <label className="block text-xs text-white/45 mb-1.5 font-medium">Description</label>
+            <textarea
+              placeholder="Describe the item, condition, what&apos;s included…"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
+              className="field w-full rounded-xl px-4 py-3 text-sm resize-none"
             />
           </div>
         </div>
 
-        <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">
-            Photos
-          </label>
+        {/* Pricing */}
+        <div className="card rounded-2xl p-5">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Pricing</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs text-white/45 mb-1.5 font-medium">
+                Price / Day <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="10"
+                  value={pricePerDay}
+                  onChange={(e) => setPricePerDay(e.target.value)}
+                  required
+                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">
+                  CSPR
+                </span>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-white/45 mb-1.5 font-medium">
+                Deposit <span className="text-red-400">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="50"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  required
+                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                />
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">
+                  CSPR
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Photos */}
+        <div className="card rounded-2xl p-5">
+          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Photos</p>
           <PhotoUpload onChange={setPhotos} />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-white font-semibold transition-colors disabled:opacity-50"
+          className="w-full py-3.5 rounded-xl btn-gradient text-sm"
         >
-          {loading ? "Creating..." : "Create Listing"}
+          {loading ? "Creating listing…" : "Create Listing"}
         </button>
       </form>
     </div>

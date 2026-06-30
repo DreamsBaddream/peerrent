@@ -14,7 +14,6 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
   function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
-
     const urls = files.map((f) => URL.createObjectURL(f))
     allFilesRef.current = [...allFilesRef.current, ...files]
     setPreviews((prev) => [...prev, ...urls])
@@ -26,8 +25,11 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="px-4 py-2 rounded-lg border border-dashed border-gray-600 text-gray-400 hover:border-emerald-500 hover:text-emerald-400 transition-colors text-sm"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-emerald-500/40 hover:text-emerald-400 transition-colors text-sm"
       >
+        <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.5">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M10 4v12M4 10h12" />
+        </svg>
         Add Photos
       </button>
       <input
@@ -45,7 +47,7 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
               key={i}
               src={src}
               alt={`Preview ${i + 1}`}
-              className="w-20 h-20 object-cover rounded-lg border border-gray-700"
+              className="w-20 h-20 object-cover rounded-xl border border-white/[0.07]"
             />
           ))}
         </div>
