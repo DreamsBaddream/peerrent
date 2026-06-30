@@ -3,8 +3,9 @@
 body {
   background: #030712;
   background-image:
-    radial-gradient(ellipse 80% 55% at 50% -5%, rgba(52, 211, 153, 0.09) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 85% 85%, rgba(34, 211, 238, 0.05) 0%, transparent 50%);
+    radial-gradient(ellipse 90% 60% at 50% -8%, rgba(52, 211, 153, 0.085) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 40% at 88% 88%, rgba(34, 211, 238, 0.045) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 35% at 8% 72%, rgba(52, 211, 153, 0.03) 0%, transparent 50%);
   background-attachment: fixed;
   color: #f9fafb;
   font-family: var(--font-geist-sans), system-ui, sans-serif;
@@ -28,35 +29,20 @@ body {
   background-clip: text;
 }
 
-/* ── Hero animated gradient text ── */
-@keyframes gradient-pan {
-  0%, 100% { background-position: 0% 50%; }
-  50%       { background-position: 100% 50%; }
-}
-
-.hero-text {
-  background: linear-gradient(120deg, #ffffff 15%, #34d399 40%, #22d3ee 58%, #ffffff 85%);
-  background-size: 300% 300%;
-  animation: gradient-pan 9s ease infinite;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 /* ── Card (glass surface with glow hover) ── */
 .card {
   background: rgba(255, 255, 255, 0.025);
   border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover,
 .group:hover .card {
-  border-color: rgba(52, 211, 153, 0.28);
+  border-color: rgba(52, 211, 153, 0.22);
   box-shadow:
-    0 0 0 1px rgba(52, 211, 153, 0.06),
-    0 8px 40px rgba(0, 0, 0, 0.45),
-    0 0 60px rgba(52, 211, 153, 0.06);
+    0 0 0 1px rgba(52, 211, 153, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 0 48px rgba(52, 211, 153, 0.05);
 }
 
 /* ── Form fields ── */
@@ -69,8 +55,8 @@ body {
 
 .field:focus {
   outline: none;
-  border-color: rgba(52, 211, 153, 0.5);
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.08);
+  border-color: rgba(52, 211, 153, 0.45);
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.07);
 }
 
 .field::placeholder {
@@ -82,17 +68,18 @@ body {
   background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
   color: #030712;
   font-weight: 600;
-  transition: opacity 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  transition: opacity 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
 }
 
 .btn-gradient:hover:not(:disabled) {
   opacity: 0.88;
-  box-shadow: 0 4px 24px rgba(52, 211, 153, 0.28);
+  box-shadow: 0 4px 20px rgba(52, 211, 153, 0.28);
   transform: translateY(-1px);
 }
 
 .btn-gradient:active:not(:disabled) {
   transform: translateY(0);
+  opacity: 1;
 }
 
 .btn-gradient:disabled {
@@ -109,3 +96,9 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.07); border-radius: 99px; }
+
+/* ── Date picker theming ── */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.4);
+  cursor: pointer;
+}

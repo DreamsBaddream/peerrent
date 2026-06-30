@@ -63,6 +63,7 @@ export default function ListPage() {
         </p>
       </div>
 
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Details */}
         <div className="card rounded-2xl p-5 space-y-4">

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import PhotoUpload from "@/components/PhotoUpload"
 import { Rental } from "@/lib/types"
+import { CheckCircle2, AlertCircle, Star } from "lucide-react"
 
 interface ReturnResult {
   damage_detected: boolean
@@ -145,25 +146,17 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
               : "border-emerald-500/25 bg-emerald-500/[0.06]"
           }`}>
             <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                result.damage_detected ? "bg-red-500/20" : "bg-emerald-500/20"
-              }`}>
-                {result.damage_detected ? (
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-red-400">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 text-emerald-400">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clipRule="evenodd" />
-                  </svg>
-                )}
-              </div>
+              {result.damage_detected ? (
+                <AlertCircle className="w-6 h-6 text-red-400 shrink-0" strokeWidth={1.75} />
+              ) : (
+                <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" strokeWidth={1.75} />
+              )}
               <p className={`font-semibold ${result.damage_detected ? "text-red-300" : "text-emerald-300"}`}>
                 {result.damage_detected ? "Damage detected — deposit held" : "No damage — deposit refunded!"}
               </p>
             </div>
             {result.notes && (
-              <p className="text-sm text-white/50 mt-2 leading-relaxed">{result.notes}</p>
+              <p className="text-sm text-white/50 mt-2 leading-relaxed pl-9">{result.notes}</p>
             )}
           </div>
 
@@ -177,12 +170,13 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
                   <button
                     key={n}
                     onClick={() => setRating(n)}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
                       rating >= n
                         ? "btn-gradient"
                         : "glass text-white/30 hover:text-white"
                     }`}
                   >
+                    <Star className={`w-3.5 h-3.5 ${rating >= n ? "fill-current" : ""}`} strokeWidth={rating >= n ? 0 : 1.5} />
                     {n}
                   </button>
                 ))}

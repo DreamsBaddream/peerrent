@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { Listing, Rental } from "@/lib/types"
+import { User, Package, Plus, ExternalLink } from "lucide-react"
 
 export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null)
@@ -72,9 +73,7 @@ export default function DashboardPage() {
       <div className="max-w-md mx-auto px-4 py-32 text-center">
         <div className="card rounded-2xl p-10">
           <div className="w-14 h-14 rounded-full glass flex items-center justify-center mx-auto mb-5">
-            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white/30" stroke="currentColor" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
+            <User className="w-6 h-6 text-white/30" strokeWidth={1.5} />
           </div>
           <p className="text-white font-semibold mb-1">Sign in to continue</p>
           <p className="text-white/35 text-sm mb-6">
@@ -96,18 +95,19 @@ export default function DashboardPage() {
           <h1 className="text-2xl font-bold text-white">Dashboard</h1>
           <p className="text-white/35 text-sm mt-0.5">Manage your listings and rentals</p>
         </div>
-        <Link href="/list" className="px-4 py-2.5 rounded-xl btn-gradient text-sm">
-          + List Item
+        <Link href="/list" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl btn-gradient text-sm">
+          <Plus className="w-4 h-4" strokeWidth={2.5} />
+          List Item
         </Link>
       </div>
 
       {/* My Listings */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <h2 className="text-xs font-semibold text-white/45 uppercase tracking-wider">My Listings</h2>
+          <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest shrink-0">My Listings</h2>
           <div className="flex-1 h-px bg-white/[0.05]" />
           {!loadingListings && (
-            <span className="text-xs text-white/20">{listings.length} item{listings.length !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-white/20 shrink-0">{listings.length} item{listings.length !== 1 ? "s" : ""}</span>
           )}
         </div>
 
@@ -119,6 +119,9 @@ export default function DashboardPage() {
           </div>
         ) : listings.length === 0 ? (
           <div className="card rounded-2xl p-10 text-center">
+            <div className="w-10 h-10 rounded-full glass flex items-center justify-center mx-auto mb-4">
+              <Package className="w-4 h-4 text-white/25" strokeWidth={1.5} />
+            </div>
             <p className="text-white/35 text-sm mb-1">No listings yet.</p>
             <Link href="/list" className="text-xs gradient-text hover:opacity-80 transition-opacity">
               Create your first listing →
@@ -181,10 +184,10 @@ export default function DashboardPage() {
       {/* My Rentals */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <h2 className="text-xs font-semibold text-white/45 uppercase tracking-wider">My Rentals</h2>
+          <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest shrink-0">My Rentals</h2>
           <div className="flex-1 h-px bg-white/[0.05]" />
           {!loadingRentals && (
-            <span className="text-xs text-white/20">{rentals.length} rental{rentals.length !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-white/20 shrink-0">{rentals.length} rental{rentals.length !== 1 ? "s" : ""}</span>
           )}
         </div>
 
@@ -231,9 +234,10 @@ export default function DashboardPage() {
                       href={`https://testnet.cspr.live/deploy/${rental.tx_hash}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-xs text-emerald-400/60 hover:text-emerald-400 font-mono transition-colors"
+                      className="inline-flex items-center gap-1 text-xs text-emerald-400/60 hover:text-emerald-400 font-mono transition-colors"
                     >
-                      {rental.tx_hash.slice(0, 12)}… ↗
+                      {rental.tx_hash.slice(0, 12)}…
+                      <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
                     </a>
                   )}
                 </div>

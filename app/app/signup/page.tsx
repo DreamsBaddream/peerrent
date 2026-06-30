@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { Check, Camera, RefreshCw } from "lucide-react"
 
 type Step = "phone" | "otp" | "selfie"
 
@@ -153,10 +154,10 @@ export default function SignupPage() {
           </h1>
           <p className="text-white/40 text-sm">
             {step === "phone"
-              ? "New here? We’ll create your account automatically."
+              ? "New here? We'll create your account automatically."
               : step === "otp"
               ? `We sent a 6-digit code to ${phone}`
-              : "Take a quick selfie to confirm you’re real."}
+              : "Take a quick selfie to confirm you're real."}
           </p>
         </div>
 
@@ -173,9 +174,7 @@ export default function SignupPage() {
                     : "glass text-white/40"
                 }`}>
                   {i < stepIdx ? (
-                    <svg viewBox="0 0 12 12" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 6.5l2.5 2.5 5-5" />
-                    </svg>
+                    <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
                   ) : i + 1}
                 </div>
                 <span className="text-xs text-white/35 hidden sm:block">{s.label}</span>
@@ -284,8 +283,9 @@ export default function SignupPage() {
                         <p className="text-red-400 text-xs">Camera access denied</p>
                         <button
                           onClick={startCamera}
-                          className="px-4 py-1.5 rounded-lg glass text-white text-xs hover:bg-white/[0.08] transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg glass text-white text-xs hover:bg-white/[0.08] transition-colors"
                         >
+                          <RefreshCw className="w-3 h-3" />
                           Retry
                         </button>
                       </>
@@ -299,8 +299,9 @@ export default function SignupPage() {
               <button
                 onClick={handleCaptureSelfie}
                 disabled={loading || !streaming}
-                className="w-full py-3 rounded-xl btn-gradient text-sm"
+                className="w-full py-3 rounded-xl btn-gradient text-sm flex items-center justify-center gap-2"
               >
+                <Camera className="w-4 h-4" strokeWidth={2} />
                 {loading ? "Verifying…" : "Capture Selfie"}
               </button>
             </div>

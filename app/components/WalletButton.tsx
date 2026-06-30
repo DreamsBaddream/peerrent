@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
+import { Wallet, Loader2 } from "lucide-react"
 
 declare global {
   interface Window {
@@ -20,7 +21,7 @@ const WALLET_DISCONNECTED = "wallet_disconnected"
 
 function truncateKey(key: string): string {
   if (key.length <= 14) return key
-  return `${key.slice(0, 8)}…${key.slice(-6)}`
+  return `${key.slice(0, 6)}…${key.slice(-4)}`
 }
 
 export default function WalletButton() {
@@ -73,9 +74,10 @@ export default function WalletButton() {
     return (
       <button
         onClick={disconnect}
-        className="px-3 py-1.5 rounded-lg glass font-mono text-xs text-white/55 hover:text-red-400 hover:border-red-500/25 transition-colors"
-        title="Click to disconnect"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass font-mono text-xs text-white/55 hover:text-red-400 hover:border-red-500/25 transition-colors"
+        title="Click to disconnect wallet"
       >
+        <Wallet className="w-3 h-3 text-emerald-400" strokeWidth={2} />
         {truncateKey(publicKey)}
       </button>
     )
@@ -86,8 +88,13 @@ export default function WalletButton() {
       data-wallet-btn
       onClick={connect}
       disabled={loading}
-      className="px-4 py-2 rounded-lg btn-gradient text-sm"
+      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass text-xs font-semibold text-white/55 hover:text-white transition-colors"
     >
+      {loading ? (
+        <Loader2 className="w-3 h-3 animate-spin" />
+      ) : (
+        <Wallet className="w-3 h-3" strokeWidth={2} />
+      )}
       {loading ? "Connecting…" : "Connect Wallet"}
     </button>
   )
