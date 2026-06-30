@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { X } from "lucide-react"
 
 interface RentModalProps {
   listingId: string
@@ -114,7 +115,10 @@ export default function RentModal({
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-sm p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
+        >
           <div className="card rounded-2xl p-6 w-full max-w-md">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
@@ -122,10 +126,9 @@ export default function RentModal({
               <button
                 onClick={() => setOpen(false)}
                 className="w-7 h-7 rounded-lg glass flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                aria-label="Close"
               >
-                <svg viewBox="0 0 14 14" fill="none" className="w-3 h-3" stroke="currentColor" strokeWidth="2">
-                  <path d="M2 2l10 10M12 2L2 12" strokeLinecap="round" />
-                </svg>
+                <X className="w-3.5 h-3.5" strokeWidth={2} />
               </button>
             </div>
 

@@ -1,6 +1,7 @@
 import RentModal from "@/components/RentModal"
 import { Listing } from "@/lib/types"
 import Link from "next/link"
+import { ChevronLeft, ShieldCheck } from "lucide-react"
 
 async function getListing(id: string): Promise<Listing | null> {
   try {
@@ -36,11 +37,9 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
       {/* Back */}
       <Link
         href="/"
-        className="inline-flex items-center gap-1.5 text-white/30 hover:text-white/65 text-sm mb-8 transition-colors"
+        className="inline-flex items-center gap-1 text-white/30 hover:text-white/65 text-sm mb-8 transition-colors"
       >
-        <svg viewBox="0 0 16 16" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M10 3L5 8l5 5" />
-        </svg>
+        <ChevronLeft className="w-4 h-4" strokeWidth={2} />
         Browse
       </Link>
 
@@ -119,7 +118,8 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
               <span className="text-white font-medium">{listing.deposit_amount} CSPR</span>
             </div>
             <div className="h-px bg-white/[0.06]" />
-            <p className="text-xs text-white/25">
+            <p className="flex items-center gap-1.5 text-xs text-white/25">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400/60 shrink-0" strokeWidth={1.75} />
               Deposit locked on-chain via Casper smart contract. Released after AI damage check.
             </p>
           </div>

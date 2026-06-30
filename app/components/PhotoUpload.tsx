@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import { ImagePlus } from "lucide-react"
 
 interface PhotoUploadProps {
   onChange: (files: File[]) => void
@@ -27,9 +28,7 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
         onClick={() => inputRef.current?.click()}
         className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-emerald-500/40 hover:text-emerald-400 transition-colors text-sm"
       >
-        <svg viewBox="0 0 20 20" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="1.5">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10 4v12M4 10h12" />
-        </svg>
+        <ImagePlus className="w-4 h-4" strokeWidth={1.5} />
         Add Photos
       </button>
       <input

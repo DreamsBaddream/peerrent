@@ -2,22 +2,31 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import WalletButton from "./WalletButton"
+import { LogOut } from "lucide-react"
 
 export default function Navbar() {
   const [verified, setVerified] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     setVerified(!!localStorage.getItem("user_id"))
   }, [])
 
+  const navLinks = [
+    { href: "/", label: "Browse" },
+    { href: "/list", label: "List Item" },
+    { href: "/dashboard", label: "Dashboard" },
+  ]
+
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/[0.07] bg-[#030712]/80 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 border-b border-white/[0.06] bg-[#030712]/88 backdrop-blur-xl">
+      <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <svg viewBox="0 0 22 22" width="22" height="22" fill="none" aria-hidden="true">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <svg viewBox="0 0 22 22" width="20" height="20" fill="none" aria-hidden="true">
             <circle cx="11" cy="3.5" r="2.5" fill="url(#nav-grad)" />
             <circle cx="19" cy="16"  r="2.5" fill="url(#nav-grad)" />
             <circle cx="3"  cy="16"  r="2.5" fill="url(#nav-grad)" />
@@ -34,30 +43,50 @@ export default function Navbar() {
               </linearGradient>
             </defs>
           </svg>
-          <span className="text-lg font-bold tracking-tight">
+          <span className="text-[15px] font-bold tracking-tight">
             <span className="gradient-text">Peer</span>
             <span className="text-white">Rent</span>
           </span>
         </Link>
 
-        {/* Links + actions */}
-        <div className="flex items-center gap-6">
-          <Link href="/"          className="text-sm text-white/45 hover:text-white transition-colors">Browse</Link>
-          <Link href="/list"      className="text-sm text-white/45 hover:text-white transition-colors">List Item</Link>
-          <Link href="/dashboard" className="text-sm text-white/45 hover:text-white transition-colors">Dashboard</Link>
+        {/* Center nav links */}
+        <div className="hidden sm:flex items-center gap-0.5">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                  isActive
+                    ? "text-white bg-white/[0.07]"
+                    : "text-white/40 hover:text-white/75 hover:bg-white/[0.04]"
+                }`}
+              >
+                {link.label}
+              </Link>
+            )
+          })}
+        </div>
 
-          <div className="w-px h-4 bg-white/10" />
-
+        {/* Right side actions */}
+        <div className="flex items-center gap-2">
           {!verified ? (
-            <Link
-              href="/signup"
-              className="text-sm px-4 py-2 rounded-lg btn-gradient"
-            >
+            <Link href="/signup" className="text-sm px-4 py-1.5 rounded-lg btn-gradient">
               Sign In
             </Link>
           ) : (
             <>
-              <Link href="/profile" className="text-sm text-white/45 hover:text-white transition-colors">Profile</Link>
+              <Link
+                href="/profile"
+                className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${
+                  pathname === "/profile"
+                    ? "text-white bg-white/[0.07]"
+                    : "text-white/40 hover:text-white/75 hover:bg-white/[0.04]"
+                }`}
+              >
+                Profile
+              </Link>
               <WalletButton />
               <button
                 onClick={() => {
@@ -67,9 +96,10 @@ export default function Navbar() {
                   setVerified(false)
                   window.location.href = "/"
                 }}
-                className="text-sm text-white/35 hover:text-red-400 transition-colors"
+                className="p-1.5 rounded-lg text-white/25 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                title="Sign out"
               >
-                Sign Out
+                <LogOut className="w-4 h-4" />
               </button>
             </>
           )}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { User, Wallet, ExternalLink, CheckCircle2, Star } from "lucide-react"
 
 interface UserProfile {
   id: string
@@ -37,15 +38,11 @@ function StarRating({ avg, count }: { avg: number | null; count: number }) {
     <div className="flex items-center gap-2">
       <div className="flex gap-0.5">
         {[1, 2, 3, 4, 5].map((star) => (
-          <svg key={star} viewBox="0 0 16 16" className="w-4 h-4" fill={star <= Math.round(avg) ? "url(#star-grad)" : "none"} stroke={star <= Math.round(avg) ? "none" : "currentColor"} strokeWidth="1.2">
-            <defs>
-              <linearGradient id="star-grad" x1="0" y1="0" x2="16" y2="16" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stopColor="#34d399" />
-                <stop offset="100%" stopColor="#22d3ee" />
-              </linearGradient>
-            </defs>
-            <path strokeLinecap="round" strokeLinejoin="round" className="text-white/15" d="M8 1.5l1.8 3.6 4 .58-2.9 2.83.68 3.99L8 10.35l-3.58 1.88.68-3.99L2.2 5.68l4-.58L8 1.5z" />
-          </svg>
+          <Star
+            key={star}
+            className={`w-4 h-4 ${star <= Math.round(avg) ? "text-emerald-400 fill-emerald-400" : "text-white/15"}`}
+            strokeWidth={star <= Math.round(avg) ? 0 : 1.2}
+          />
         ))}
       </div>
       <span className="text-white font-semibold text-sm">{rounded}</span>
@@ -82,9 +79,7 @@ export default function ProfilePage() {
       <div className="max-w-md mx-auto px-4 py-32 text-center">
         <div className="card rounded-2xl p-10">
           <div className="w-14 h-14 rounded-full glass flex items-center justify-center mx-auto mb-5">
-            <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 text-white/30" stroke="currentColor" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-            </svg>
+            <User className="w-6 h-6 text-white/30" strokeWidth={1.5} />
           </div>
           <p className="text-white font-semibold mb-1">Sign in to view your profile</p>
           <p className="text-white/35 text-sm mb-6">Your identity, wallet, and stats in one place.</p>
@@ -130,9 +125,7 @@ export default function ProfilePage() {
               />
             ) : (
               <div className="w-20 h-20 rounded-full glass flex items-center justify-center ring-2 ring-white/[0.08]">
-                <svg viewBox="0 0 24 24" fill="none" className="w-9 h-9 text-white/25" stroke="currentColor" strokeWidth="1.2">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                </svg>
+                <User className="w-8 h-8 text-white/25" strokeWidth={1.2} />
               </div>
             )}
             {/* Verified dot */}
@@ -150,8 +143,9 @@ export default function ProfilePage() {
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="text-white font-semibold text-lg">{maskPhone(profile.phone)}</span>
               {profile.verified ? (
-                <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">
-                  Identity Verified
+                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-emerald-400/10 text-emerald-400 border border-emerald-400/20">
+                  <CheckCircle2 className="w-3 h-3" strokeWidth={2} />
+                  Verified
                 </span>
               ) : (
                 <span className="text-xs px-2 py-0.5 rounded-full bg-amber-400/10 text-amber-400 border border-amber-400/20">
@@ -195,7 +189,7 @@ export default function ProfilePage() {
         <p className="text-xs text-white/35 uppercase tracking-wider mb-3">Your Rating</p>
         <StarRating avg={profile.avg_rating} count={profile.rating_count} />
         {profile.avg_rating === null && !localWallet && (
-          <p className="text-white/20 text-xs mt-1">Connect your wallet so others can rate you after rentals.</p>
+          <p className="text-white/20 text-xs mt-2">Connect your wallet so others can rate you after rentals.</p>
         )}
       </div>
 
@@ -207,16 +201,20 @@ export default function ProfilePage() {
             <p className="text-xs text-white/35 uppercase tracking-wider mb-3">Casper Wallet</p>
             {wallet ? (
               <div className="flex items-center justify-between gap-3">
-                <span className="font-mono text-sm text-white/70 truncate">
-                  {wallet.slice(0, 12)}…{wallet.slice(-8)}
-                </span>
+                <div className="flex items-center gap-2 min-w-0">
+                  <Wallet className="w-4 h-4 text-emerald-400 shrink-0" strokeWidth={1.75} />
+                  <span className="font-mono text-sm text-white/70 truncate">
+                    {wallet.slice(0, 12)}…{wallet.slice(-8)}
+                  </span>
+                </div>
                 <a
                   href={`https://testnet.cspr.live/account/${wallet}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="shrink-0 text-xs text-emerald-400/70 hover:text-emerald-400 transition-colors"
+                  className="shrink-0 flex items-center gap-1 text-xs text-emerald-400/70 hover:text-emerald-400 transition-colors"
                 >
-                  View ↗
+                  View
+                  <ExternalLink className="w-3 h-3" strokeWidth={1.75} />
                 </a>
               </div>
             ) : (

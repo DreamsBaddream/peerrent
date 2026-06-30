@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { ImageIcon } from "lucide-react"
 
 interface ItemCardProps {
   id: string
@@ -30,15 +31,11 @@ export default function ItemCard({
             />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-white/20">
-              <svg viewBox="0 0 24 24" fill="none" className="w-8 h-8" stroke="currentColor" strokeWidth="1">
-                <rect x="3" y="3" width="18" height="18" rx="3" />
-                <circle cx="8.5" cy="8.5" r="1.5" />
-                <path d="M21 15L16 10L5 21" />
-              </svg>
+              <ImageIcon className="w-8 h-8" strokeWidth={1} />
               <span className="text-xs">No photo</span>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
+          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
         </div>
 
         {/* Info */}
@@ -47,9 +44,9 @@ export default function ItemCard({
             {title}
           </h3>
           <div className="flex items-end justify-between">
-            <div>
+            <div className="flex items-baseline gap-1">
               <span className="gradient-text text-base font-bold">{price_per_day}</span>
-              <span className="text-white/35 text-xs ml-1">CSPR / day</span>
+              <span className="text-white/35 text-xs">CSPR / day</span>
             </div>
             <span className="text-white/25 text-xs">{deposit_amount} dep.</span>
           </div>
