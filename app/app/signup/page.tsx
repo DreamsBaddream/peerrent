@@ -76,6 +76,13 @@ export default function SignupPage() {
       if (id) {
         setUserId(id)
       }
+      if (data.verified && id) {
+        localStorage.setItem("user_id", id)
+        sessionStorage.removeItem("wallet_disconnected")
+        toast.success("Welcome back!")
+        router.push("/")
+        return
+      }
       toast.success("Phone verified!")
       setStep("selfie")
     } catch (err: unknown) {

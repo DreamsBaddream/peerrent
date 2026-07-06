@@ -35,14 +35,14 @@ export async function POST(req: Request) {
         { phone },
         { onConflict: "phone", ignoreDuplicates: false }
       )
-      .select("id")
+      .select("id, verified")
       .single()
 
     if (error) {
       return Response.json({ error: error.message }, { status: 500 })
     }
 
-    return Response.json({ userId: data.id, success: true })
+    return Response.json({ userId: data.id, verified: data.verified === true, success: true })
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to verify OTP"
     return Response.json({ error: message }, { status: 500 })
