@@ -13,9 +13,6 @@ export default function Navbar() {
 
   useEffect(() => {
     setVerified(!!localStorage.getItem("user_id"))
-  }, [])
-
-  useEffect(() => {
     setMenuOpen(false)
   }, [pathname])
 
