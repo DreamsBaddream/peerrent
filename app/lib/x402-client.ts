@@ -6,7 +6,7 @@ import { NativeTransferBuilder, PublicKey, AccountHash } from "casper-js-sdk"
 
 interface PaymentAccept {
   maxAmountRequired: string
-  payTo: string // "00" + 64-hex account hash (Casper x402 format)
+  payTo: string
   scheme?: string
   network?: string
 }
@@ -27,7 +27,6 @@ const casperSchemeClient = {
 
     const senderPublicKey = PublicKey.fromHex(publicKeyHex)
 
-    // payTo is "00" + 64-hex — strip the "00" prefix for AccountHash.fromString
     const rawHash = payTo.startsWith("00") ? payTo.slice(2) : payTo
     const recipientAccountHash = AccountHash.fromString(`account-hash-${rawHash}`)
 
@@ -37,7 +36,7 @@ const casperSchemeClient = {
       .amount(amountMotes)
       .id(Date.now())
       .chainName("casper-test")
-      .payment(100_000_000) // 0.1 CSPR gas
+      .payment(100_000_000)
       .build()
 
     const txJson = JSON.stringify(transaction.toJSON())

@@ -120,7 +120,6 @@ export default function RentModal({
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
         >
           <div className="card-log p-6 w-full max-w-md bg-paper2">
-            {/* Header */}
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-ink text-base uppercase tracking-tight">
                 Rental Order
@@ -135,7 +134,6 @@ export default function RentModal({
             </div>
 
             <div className="space-y-4">
-              {/* Dates */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mono-label block mb-1.5">Start Date</label>
@@ -159,7 +157,6 @@ export default function RentModal({
                 </div>
               </div>
 
-              {/* Price summary — ledger style */}
               {days > 0 && (
                 <div className="border border-ink bg-paper p-4 space-y-2.5 font-mono">
                   <div className="flex justify-between text-sm">
@@ -202,7 +199,6 @@ export default function RentModal({
               )}
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setOpen(false)}

@@ -37,7 +37,6 @@ export default function DashboardPage() {
         setListings(data.listings ?? data ?? [])
       }
     } catch {
-      // silently fail
     } finally {
       setLoadingListings(false)
     }
@@ -66,7 +65,6 @@ export default function DashboardPage() {
         setRentals(data.rentals ?? data ?? [])
       }
     } catch {
-      // silently fail
     } finally {
       setLoadingRentals(false)
     }
@@ -93,7 +91,6 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 space-y-14">
-      {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <p className="mono-label mb-1.5">Operator Log</p>
@@ -105,7 +102,6 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {/* My Listings */}
       <section>
         <div className="flex items-center gap-4 mb-6">
           <h2 className="mono-label text-ink/70 shrink-0">My Listings</h2>
@@ -183,7 +179,6 @@ export default function DashboardPage() {
         )}
       </section>
 
-      {/* My Rentals */}
       <section>
         <div className="flex items-center gap-4 mb-6">
           <h2 className="mono-label text-ink/70 shrink-0">My Rentals</h2>

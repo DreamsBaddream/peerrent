@@ -11,6 +11,11 @@ app/.next/
 .env
 .env.local
 .env.*
+!.env.example
+
+# Keys
+keys/
+*.pem
 
 # OS
 .DS_Store
@@ -19,4 +24,3 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
-

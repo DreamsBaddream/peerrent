@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Validate listing exists and is available
     const { data: listing, error: listingError } = await supabase
       .from("listings")
       .select("id, is_available, owner_id, photos, deposit_amount")
@@ -65,7 +64,6 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Calculate rental days
     const start = new Date(startDate)
     const end = new Date(endDate)
     const diffMs = end.getTime() - start.getTime()
@@ -77,10 +75,8 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Same-day rentals count as 1 day (matches the price shown in the UI)
     const rentalDays = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
 
-    // Update wallet address if provided
     if (renterWallet) {
       await supabase
         .from("users")
@@ -88,7 +84,6 @@ export async function POST(req: NextRequest) {
         .eq("id", renterId)
     }
 
-    // Create rental record
     const rentalInsert: Record<string, unknown> = {
       listing_id: listingId,
       renter_id: renterId,
@@ -114,7 +109,6 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: rentalError.message }, { status: 500 })
     }
 
-    // Mark listing as unavailable
     const { error: updateError } = await supabase
       .from("listings")
       .update({ is_available: false })
@@ -124,7 +118,6 @@ export async function POST(req: NextRequest) {
       console.error("Failed to mark listing unavailable:", updateError.message)
     }
 
-    // Lock deposit on-chain and persist the deploy hash
     const depositMotes = Math.round((listing.deposit_amount ?? 0) * 1_000_000_000).toString()
     const deployHash = await rentItemOnChain(listingId, rentalDays, depositMotes)
     if (deployHash) {

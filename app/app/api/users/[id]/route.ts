@@ -30,7 +30,6 @@ export async function GET(
       return Response.json({ error: userResult.error.message }, { status: 500 })
     }
 
-    // Fetch ratings by wallet address
     let avg_rating: number | null = null
     let rating_count = 0
     const walletAddress = userResult.data.wallet_address

@@ -38,7 +38,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         setRental(data.rental ?? data ?? null)
       }
     } catch {
-      // silently fail
     }
   }
 
@@ -58,7 +57,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         throw new Error(err.error ?? "Return failed")
       }
       const data = await res.json()
-      // API returns { damageDetected, reason, ... }
       setResult({ damage_detected: data.damageDetected ?? false, notes: data.reason })
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Something went wrong")
@@ -92,7 +90,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      {/* Header */}
       <div className="mb-10">
         <p className="mono-label mb-2">Return Inspection</p>
         <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">Return Item</h1>
@@ -101,7 +98,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         </p>
       </div>
 
-      {/* Before photos */}
       {rental?.before_photos?.length ? (
         <div className="mb-6">
           <p className="mono-label mb-3">Before Photos (at pickup)</p>
@@ -118,7 +114,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         </div>
       ) : null}
 
-      {/* Return form */}
       {!result && (
         <div className="card-log p-6 space-y-5">
           <div>
@@ -137,13 +132,11 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         </div>
       )}
 
-      {/* Result */}
       {result && (
         <div className="space-y-5">
           <div className={`card-log p-8 text-center ${
             result.damage_detected ? "bg-err/[0.04]" : "bg-ok/[0.04]"
           }`}>
-            {/* Rubber-stamp verdict */}
             <div
               className={`stamp-verdict inline-block border-[3px] font-display uppercase text-xl md:text-2xl px-5 py-2.5 tracking-tight mb-4 ${
                 result.damage_detected
@@ -166,7 +159,6 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
             )}
           </div>
 
-          {/* Rating */}
           {!ratingDone ? (
             <div className="card-log p-6">
               <h2 className="text-ink font-bold mb-1">Rate this experience</h2>

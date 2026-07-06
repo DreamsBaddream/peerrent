@@ -112,11 +112,9 @@ export default function ProfilePage() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-12 space-y-4">
 
-      {/* Identity card */}
       <div className="card-log p-6">
         <p className="mono-label mb-5">Operator ID Card</p>
         <div className="flex items-center gap-5">
-          {/* Avatar */}
           <div className="relative shrink-0">
             {profile.selfie_url ? (
               <img
@@ -129,7 +127,6 @@ export default function ProfilePage() {
                 <User className="w-8 h-8 text-ink/30" strokeWidth={1.2} />
               </div>
             )}
-            {/* Verified dot */}
             {profile.verified && (
               <div className="absolute -bottom-1.5 -right-1.5 w-5 h-5 bg-ok border border-ink flex items-center justify-center">
                 <svg viewBox="0 0 10 10" fill="none" className="w-2.5 h-2.5" stroke="#faf8f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -139,7 +136,6 @@ export default function ProfilePage() {
             )}
           </div>
 
-          {/* Info */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap mb-1">
               <span className="text-ink font-bold text-lg font-mono">{maskPhone(profile.phone)}</span>
@@ -165,7 +161,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card-log p-5 text-center">
           <p className="font-display text-3xl text-accent mb-1">{profile.listing_count}</p>
@@ -183,7 +178,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Rating */}
       <div className="card-log p-5">
         <p className="mono-label mb-3">Your Rating</p>
         <StarRating avg={profile.avg_rating} count={profile.rating_count} />
@@ -192,7 +186,6 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Wallet */}
       {(() => {
         const wallet = localWallet || profile.wallet_address
         return (
@@ -226,13 +219,11 @@ export default function ProfilePage() {
         )
       })()}
 
-      {/* Account ID */}
       <div className="card-log p-5">
         <p className="mono-label mb-2">Account ID</p>
         <p className="font-mono text-xs text-ink/45 break-all">{profile.id}</p>
       </div>
 
-      {/* Quick links */}
       <div className="flex gap-3">
         <Link href="/dashboard" className="btn-line flex-1 text-center py-3">
           Dashboard

@@ -26,7 +26,6 @@ pub struct PeerRent {
 impl PeerRent {
     pub fn init(&mut self) {}
 
-    /// Owner lists an item. Must attach at least 1 CSPR as stake.
     #[odra(payable)]
     pub fn list_item(&mut self, item_id: String, deposit_amount: U512, daily_rate: U512) {
         let stake = self.env().attached_value();
@@ -40,7 +39,6 @@ impl PeerRent {
         self.item_is_rented.set(&item_id, false);
     }
 
-    /// Renter calls this, attaching the exact deposit amount in CSPR.
     #[odra(payable)]
     pub fn rent_item(&mut self, item_id: String, days: u64) {
         let is_rented = self.item_is_rented.get(&item_id).unwrap_or_default();
@@ -59,7 +57,6 @@ impl PeerRent {
         let _ = days;
     }
 
-    /// Called after AI damage check. No damage = refund renter. Damage = send to owner.
     pub fn return_item(&mut self, item_id: String, damage: bool) {
         let is_rented = self.item_is_rented.get(&item_id).unwrap_or_default();
         if !is_rented {
@@ -77,7 +74,6 @@ impl PeerRent {
         self.rental_deposits.set(&item_id, U512::zero());
     }
 
-    /// Either party rates the other. Score must be 1-5.
     pub fn rate_user(&mut self, user: Address, score: u8) {
         if score < 1 || score > 5 {
             self.env().revert(Error::InvalidScore);
@@ -88,7 +84,6 @@ impl PeerRent {
         self.rating_counts.set(&user, count + 1);
     }
 
-    /// Returns average rating * 10 (e.g. 45 = 4.5 stars). Returns 0 if unrated.
     pub fn get_rating(&self, user: Address) -> u64 {
         let total = self.rating_totals.get(&user).unwrap_or(0u64);
         let count = self.rating_counts.get(&user).unwrap_or(0u64);
@@ -126,9 +121,9 @@ mod tests {
         let mut contract = PeerRent::deploy(&env, NoArgs);
 
         let item_id = "camera-01".to_string();
-        let deposit = U512::from(50_000_000_000u64); // 50 CSPR
-        let daily_rate = U512::from(10_000_000_000u64); // 10 CSPR
-        let stake = U512::from(1_000_000_000u64); // 1 CSPR
+        let deposit = U512::from(50_000_000_000u64);
+        let daily_rate = U512::from(10_000_000_000u64);
+        let stake = U512::from(1_000_000_000u64);
 
         contract
             .with_tokens(stake)
@@ -194,7 +189,6 @@ mod tests {
 
         contract.rate_user(user, 5);
         contract.rate_user(user, 3);
-        // (5 + 3) / 2 * 10 = 40
         assert_eq!(contract.get_rating(user), 40);
     }
 }

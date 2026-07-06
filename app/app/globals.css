@@ -1,10 +1,5 @@
 @import "tailwindcss";
 
-/* ═══════════════════════════════════════════════════════════
-   PEERRENT — EQUIPMENT LOGBOOK DESIGN SYSTEM
-   cream paper ▪ ink black ▪ safety orange ▪ hard borders
-   ═══════════════════════════════════════════════════════════ */
-
 @theme {
   --color-paper: #f1ede2;
   --color-paper2: #faf8f1;
@@ -21,7 +16,7 @@
 
 body {
   background-color: #f1ede2;
-  /* faint drafting-paper dot grid */
+
   background-image: radial-gradient(rgba(28, 26, 19, 0.11) 1px, transparent 1px);
   background-size: 24px 24px;
   color: #1c1a13;
@@ -35,12 +30,10 @@ body {
   color: #faf8f1;
 }
 
-/* Tailwind v4 preflight sets buttons to cursor:default — restore affordance */
 button:not(:disabled) {
   cursor: pointer;
 }
 
-/* ── Entrance animation: staggered rise ── */
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -56,7 +49,6 @@ button:not(:disabled) {
 .rise-4 { animation-delay: 0.24s; }
 .rise-5 { animation-delay: 0.30s; }
 
-/* ── Text links: always underlined, accent on hover ── */
 .link-u {
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -69,7 +61,6 @@ button:not(:disabled) {
   text-decoration-color: #e04a00;
 }
 
-/* ── Paper card: hard border, offset shadow ── */
 .card-log {
   background: #faf8f1;
   border: 1px solid #1c1a13;
@@ -83,7 +74,6 @@ button:not(:disabled) {
   box-shadow: 6px 6px 0 rgba(28, 26, 19, 0.18);
 }
 
-/* ── Buttons: press-down mechanics ── */
 .btn-ink,
 .btn-accent,
 .btn-line {
@@ -145,7 +135,6 @@ button:not(:disabled) {
   transform: none;
 }
 
-/* ── Form fields ── */
 .field {
   background: #fffdf6;
   border: 1px solid rgba(28, 26, 19, 0.45);
@@ -163,7 +152,6 @@ button:not(:disabled) {
   color: rgba(28, 26, 19, 0.32);
 }
 
-/* ── Stamp badges ── */
 .stamp {
   display: inline-flex;
   align-items: center;
@@ -185,7 +173,6 @@ button:not(:disabled) {
 
 .stamp-tilt { transform: rotate(-2deg); }
 
-/* big rubber-stamp verdict */
 @keyframes stamp-in {
   0%   { transform: scale(1.7) rotate(-9deg); opacity: 0; }
   55%  { transform: scale(0.94) rotate(-2deg); opacity: 1; }
@@ -197,7 +184,6 @@ button:not(:disabled) {
   transform: rotate(-3deg);
 }
 
-/* ── Mono labels ── */
 .mono-label {
   font-family: var(--font-plex-mono), monospace;
   font-size: 0.625rem;
@@ -207,7 +193,6 @@ button:not(:disabled) {
   color: rgba(28, 26, 19, 0.55);
 }
 
-/* ── Ledger rule ── */
 .rule {
   height: 1px;
   background: rgba(28, 26, 19, 0.25);
@@ -218,7 +203,6 @@ button:not(:disabled) {
   background: #1c1a13;
 }
 
-/* ── Scrollbar ── */
 * {
   scrollbar-width: thin;
   scrollbar-color: rgba(28, 26, 19, 0.3) transparent;
@@ -228,7 +212,6 @@ button:not(:disabled) {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(28, 26, 19, 0.3); }
 
-/* ── Date picker on light theme ── */
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.65;

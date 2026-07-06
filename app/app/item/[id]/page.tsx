@@ -34,7 +34,6 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
-      {/* Back */}
       <Link
         href="/"
         className="inline-flex items-center gap-1 font-mono text-xs uppercase tracking-[0.1em] text-ink/45 hover:text-ink mb-8 transition-colors"
@@ -44,7 +43,6 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        {/* Photos */}
         <div className="space-y-3">
           <div className="aspect-[4/3] bg-ink/[0.04] overflow-hidden card-log relative">
             {listing.photos.length > 0 ? (
@@ -76,9 +74,7 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
           )}
         </div>
 
-        {/* Info */}
         <div className="space-y-6">
-          {/* Availability stamp + title + price */}
           <div>
             <div className={`stamp stamp-tilt mb-4 ${listing.is_available ? "stamp-ok" : "stamp-err"}`}>
               <span className={`w-1.5 h-1.5 ${listing.is_available ? "bg-ok" : "bg-err"}`} />
@@ -95,7 +91,6 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
             </div>
           </div>
 
-          {/* Description */}
           {listing.description && (
             <div>
               <h2 className="mono-label mb-3">Description</h2>
@@ -103,7 +98,6 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
             </div>
           )}
 
-          {/* Price breakdown — spec sheet */}
           <div className="card-log p-5 space-y-3">
             <h3 className="mono-label">Pricing</h3>
             <div className="flex justify-between text-sm font-mono">
@@ -121,7 +115,6 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
             </p>
           </div>
 
-          {/* Rent action */}
           {listing.is_available && (
             <RentModal
               listingId={listing.id}

@@ -49,7 +49,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Upload each photo to Supabase Storage
     const photoUrls: string[] = []
 
     for (const photo of photos) {
@@ -76,7 +75,6 @@ export async function POST(req: Request) {
       photoUrls.push(publicUrlData.publicUrl)
     }
 
-    // Insert listing into Supabase
     const { data, error } = await supabase
       .from("listings")
       .insert({
@@ -97,7 +95,6 @@ export async function POST(req: Request) {
     }
 
     const itemId = data.id
-    // Register item on-chain and persist the deploy hash
     const depositMotes = Math.round(deposit_amount * 1_000_000_000).toString()
     const dailyRateMotes = Math.round(price_per_day * 1_000_000_000).toString()
     const deployHash = await listItemOnChain(itemId, depositMotes, dailyRateMotes)

@@ -30,7 +30,6 @@ export default function SignupPage() {
     if (step !== "selfie") return
     setCameraError(false)
     startCamera()
-    // Stop the camera when leaving the selfie step or unmounting
     return () => stopCamera()
   }, [step])
 
@@ -146,7 +145,6 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center px-4 py-16">
       <div className="w-full max-w-md">
 
-        {/* Header */}
         <div className="text-center mb-10">
           <p className="mono-label mb-3">Operator Registration</p>
           <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">
@@ -161,7 +159,6 @@ export default function SignupPage() {
           </p>
         </div>
 
-        {/* Step tracker */}
         <div className="flex items-center justify-center mb-8">
           {STEPS.map((s, i) => (
             <div key={s.key} className="flex items-center">
@@ -188,10 +185,8 @@ export default function SignupPage() {
           ))}
         </div>
 
-        {/* Card */}
         <div className="card-log p-6">
 
-          {/* Phone step */}
           {step === "phone" && (
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div className="px-3 py-2.5 border border-warn/50 bg-warn/5 font-mono text-[11px] text-warn mb-5">
@@ -219,7 +214,6 @@ export default function SignupPage() {
             </form>
           )}
 
-          {/* OTP step */}
           {step === "otp" && (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div>
@@ -252,7 +246,6 @@ export default function SignupPage() {
             </form>
           )}
 
-          {/* Selfie step */}
           {step === "selfie" && (
             <div className="space-y-4">
               <div className="relative bg-ink overflow-hidden aspect-video border border-ink">
@@ -266,7 +259,6 @@ export default function SignupPage() {
                     ;(e.target as HTMLVideoElement).play()
                   }}
                 />
-                {/* Face guide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="w-28 h-36 rounded-full border-2 border-paper2/40 border-dashed" />
                 </div>

@@ -8,7 +8,6 @@ export async function POST(req: Request) {
       return Response.json({ error: "Phone number is required" }, { status: 400 })
     }
 
-    // Dev mode: skip real SMS if Twilio is not configured
     if (!process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN) {
       console.log(`[DEV] OTP for ${phone}: 000000`)
       return Response.json({ success: true, devMode: true })

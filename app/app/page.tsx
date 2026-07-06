@@ -22,15 +22,12 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* ── Hero ── */}
       <section className="max-w-6xl mx-auto px-4 pt-12 pb-12">
-        {/* Testnet stamp */}
         <div className="stamp stamp-ok stamp-tilt mb-7 rise">
           <span className="w-1.5 h-1.5 bg-ok animate-pulse" />
           Live on Casper Testnet
         </div>
 
-        {/* Headline */}
         <h1 className="font-display text-4xl md:text-6xl uppercase leading-[0.95] tracking-tight mb-5 max-w-2xl rise rise-1">
           Borrow anything.
           <br />
@@ -39,13 +36,11 @@ export default async function HomePage() {
 
         <div className="rule-solid max-w-xs mb-5 rise rise-2" />
 
-        {/* Sub-headline */}
         <p className="text-ink/65 text-base max-w-lg mb-8 leading-relaxed rise rise-2">
           Rent cameras, bikes, tools — from people near you.
           Deposits locked on-chain. Returns inspected by AI.
         </p>
 
-        {/* CTAs */}
         <div className="flex flex-wrap items-center gap-4 mb-8 rise rise-3">
           <Link
             href="#browse"
@@ -59,7 +54,6 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        {/* Spec sheet trust markers */}
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 rise rise-4">
           <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-ink/55">
             <ShieldCheck className="w-3.5 h-3.5 text-ok" strokeWidth={1.75} />
@@ -76,7 +70,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Listings ── */}
       <section id="browse" className="scroll-mt-14 max-w-6xl mx-auto px-4 pb-20">
         <div className="flex items-center gap-4 mb-6">
           <h2 className="mono-label text-ink/70 shrink-0">Inventory</h2>

@@ -1,4 +1,3 @@
--- Run this in the Supabase SQL editor to create the schema
 
 create table if not exists users (
   id uuid primary key default gen_random_uuid(),
@@ -45,13 +44,11 @@ create table if not exists ratings (
   created_at timestamptz default now()
 );
 
--- Enable RLS
 alter table users enable row level security;
 alter table listings enable row level security;
 alter table rentals enable row level security;
 alter table ratings enable row level security;
 
--- Basic RLS policies (allow all for hackathon — tighten for production)
 create policy "Public listings" on listings for select using (true);
 create policy "Auth insert listings" on listings for insert with check (true);
 create policy "Auth update listings" on listings for update using (true);

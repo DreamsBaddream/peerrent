@@ -11,7 +11,6 @@ function buildServer() {
 
 export const x402Server = buildServer()
 
-// 1 CSPR expressed in motes (1 CSPR = 1,000,000,000 motes)
 export const rentalPaymentConfig: RouteConfig = {
   accepts: {
     scheme: "exact",

@@ -12,7 +12,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Dev mode: accept "000000" as the OTP when Twilio is not configured
     const devMode = !process.env.TWILIO_ACCOUNT_SID || !process.env.TWILIO_AUTH_TOKEN
     if (!devMode) {
       const client = twilio(
@@ -30,7 +29,6 @@ export async function POST(req: Request) {
       return Response.json({ error: "Dev mode: use code 000000" }, { status: 400 })
     }
 
-    // Upsert user in Supabase
     const { data, error } = await supabase
       .from("users")
       .upsert(

@@ -21,7 +21,6 @@ export default function ItemCard({
   return (
     <Link href={`/item/${id}`} className="group block">
       <div className="card-log card-log-hover overflow-hidden">
-        {/* Image */}
         <div className="aspect-[4/3] bg-ink/[0.04] overflow-hidden relative border-b border-ink">
           {photo ? (
             <img
@@ -35,13 +34,11 @@ export default function ItemCard({
               <span className="font-mono text-[10px] uppercase tracking-[0.14em]">No photo</span>
             </div>
           )}
-          {/* Ref tag */}
           <span className="absolute top-2 left-2 bg-paper2 border border-ink font-mono text-[9px] font-semibold tracking-[0.12em] uppercase px-1.5 py-0.5">
             REF·{id.slice(0, 4).toUpperCase()}
           </span>
         </div>
 
-        {/* Info */}
         <div className="p-4">
           <h3 className="text-ink text-sm font-bold leading-tight line-clamp-2 mb-3">
             {title}

@@ -55,7 +55,6 @@ export default function ListPage() {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
-      {/* Header */}
       <div className="mb-10">
         <p className="mono-label mb-2">New Entry</p>
         <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">List an Item</h1>
@@ -65,7 +64,6 @@ export default function ListPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Details */}
         <div className="card-log p-5 space-y-4">
           <p className="mono-label">01 — Details</p>
           <div>
@@ -93,7 +91,6 @@ export default function ListPage() {
           </div>
         </div>
 
-        {/* Pricing */}
         <div className="card-log p-5">
           <p className="mono-label mb-4">02 — Pricing</p>
           <div className="grid grid-cols-2 gap-4">
@@ -140,7 +137,6 @@ export default function ListPage() {
           </div>
         </div>
 
-        {/* Photos */}
         <div className="card-log p-5">
           <p className="mono-label mb-4">03 — Photos</p>
           <PhotoUpload onChange={setPhotos} />

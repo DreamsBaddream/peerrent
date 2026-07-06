@@ -12,7 +12,6 @@ export async function POST(req: Request) {
       return Response.json({ error: "rentalId is required" }, { status: 400 })
     }
 
-    // Fetch rental record including before_photos
     const { data: rental, error: rentalError } = await supabase
       .from("rentals")
       .select("*, listing:listings!rentals_listing_id_fkey(owner_id)")
@@ -30,7 +29,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Upload after-photos to Supabase Storage
     const afterPhotoUrls: string[] = []
 
     for (const photo of afterPhotos) {
@@ -60,7 +58,6 @@ export async function POST(req: Request) {
       afterPhotoUrls.push(publicUrlData.publicUrl)
     }
 
-    // Run damage check if we have both before and after photos
     let damageDetected = false
     let damageReason = "No photos provided for comparison"
     let damageSeverity = "none"
@@ -68,7 +65,6 @@ export async function POST(req: Request) {
     const beforePhotos: string[] = rental.before_photos || []
 
     if (beforePhotos.length > 0 && afterPhotoUrls.length > 0) {
-      // Use first photo from each set for comparison
       const beforeUrl = beforePhotos[0]
       const afterUrl = afterPhotoUrls[0]
 
@@ -91,10 +87,8 @@ export async function POST(req: Request) {
       }
     }
 
-    // Determine new rental status based on damage result
     const newStatus = damageDetected ? "disputed" : "returned"
 
-    // Update rental record
     const { error: updateError } = await supabase
       .from("rentals")
       .update({
@@ -108,7 +102,6 @@ export async function POST(req: Request) {
       return Response.json({ error: updateError.message }, { status: 500 })
     }
 
-    // Mark listing as available again (only if no damage or after resolution)
     if (!damageDetected) {
       await supabase
         .from("listings")
@@ -116,7 +109,6 @@ export async function POST(req: Request) {
         .eq("id", rental.listing_id)
     }
 
-    // Settle deposit on-chain: release to renter if no damage, send to owner if damaged
     const casperHash = await returnItemOnChain(rental.listing_id, damageDetected)
     if (casperHash) {
       await supabase.from("rentals").update({ tx_hash: casperHash }).eq("id", rentalId)

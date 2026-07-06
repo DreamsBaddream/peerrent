@@ -13,7 +13,6 @@ export async function PATCH(
       return Response.json({ error: "owner_id is required" }, { status: 400 })
     }
 
-    // Verify ownership
     const { data: listing, error: fetchError } = await supabase
       .from("listings")
       .select("owner_id")

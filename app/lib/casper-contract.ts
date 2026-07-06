@@ -17,7 +17,7 @@ import * as fs from "fs"
 import * as path from "path"
 
 const NODE_URL = process.env.CASPER_NODE_URL!
-const CONTRACT_HASH = process.env.CASPER_CONTRACT_HASH! // package hash hex
+const CONTRACT_HASH = process.env.CASPER_CONTRACT_HASH!
 const KEY_PATH = path.join(
   process.cwd(),
   "..",
@@ -77,9 +77,9 @@ export async function listItemOnChain(
         item_id: CLValue.newCLString(itemId),
         deposit_amount: CLValue.newCLUInt512(depositMotes),
         daily_rate: CLValue.newCLUInt512(dailyRateMotes),
-        amount: CLValue.newCLUInt512("1000000000"), // 1 CSPR stake
+        amount: CLValue.newCLUInt512("1000000000"),
       },
-      "5000000000" // 5 CSPR covers gas + stake
+      "5000000000"
     )
     console.log(`[casper] list_item deploy: ${hash}`)
     return hash

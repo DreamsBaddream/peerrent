@@ -18,7 +18,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Validate rental exists
     const { data: rental, error: rentalError } = await supabase
       .from("rentals")
       .select("id, listing_id, renter_id, status, listing:listings!rentals_listing_id_fkey(owner_id)")
@@ -29,7 +28,6 @@ export async function POST(req: Request) {
       return Response.json({ error: "Rental not found" }, { status: 404 })
     }
 
-    // Verify the rater was a party to this rental
     const listing = (Array.isArray(rental.listing) ? rental.listing[0] : rental.listing) as { owner_id: string } | null
     const ownerId = listing?.owner_id
     const isOwner = ownerId === raterId
@@ -49,9 +47,6 @@ export async function POST(req: Request) {
       )
     }
 
-    // Resolve the rating target: the other party to the rental.
-    // Profile stats look ratings up by target_wallet, so fall back to the
-    // target's stored wallet when the client didn't supply one.
     let resolvedTargetWallet: string | null = targetWallet ?? null
     if (!resolvedTargetWallet) {
       const targetUserId = isRenter ? ownerId : rental.renter_id
@@ -65,8 +60,6 @@ export async function POST(req: Request) {
       }
     }
 
-    // Store rating in Supabase for record-keeping
-    // The actual on-chain rating is triggered from the frontend via casper-js-sdk
     const { error: ratingError } = await supabase.from("ratings").insert({
       rental_id: rentalId,
       rater_id: raterId,
@@ -75,7 +68,6 @@ export async function POST(req: Request) {
     })
 
     if (ratingError) {
-      // If the ratings table doesn't exist yet, log and continue gracefully
       console.error("Rating insert error:", ratingError.message)
     }
 

@@ -37,7 +37,6 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 bg-paper2 border-b border-ink">
       <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
 
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <svg viewBox="0 0 22 22" width="20" height="20" fill="none" aria-hidden="true">
             <circle cx="11" cy="3.5" r="2.5" fill="#e04a00" />
@@ -58,7 +57,6 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Center nav links (desktop) */}
         <div className="hidden sm:flex items-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href
@@ -78,7 +76,6 @@ export default function Navbar() {
           })}
         </div>
 
-        {/* Right side actions */}
         <div className="flex items-center gap-2">
           {!verified ? (
             <Link href="/signup" className="btn-accent px-4 py-1.5 text-xs">
@@ -107,7 +104,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Mobile menu toggle */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
             className="sm:hidden p-1.5 border border-ink/40 text-ink"
@@ -118,7 +114,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu panel */}
       {menuOpen && (
         <div className="sm:hidden border-t border-ink bg-paper2">
           <div className="px-5 py-3 flex flex-col gap-1">
