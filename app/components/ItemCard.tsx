@@ -20,35 +20,40 @@ export default function ItemCard({
 
   return (
     <Link href={`/item/${id}`} className="group block">
-      <div className="card rounded-2xl overflow-hidden">
+      <div className="card-log card-log-hover overflow-hidden">
         {/* Image */}
-        <div className="aspect-[4/3] bg-white/[0.03] overflow-hidden relative">
+        <div className="aspect-[4/3] bg-ink/[0.04] overflow-hidden relative border-b border-ink">
           {photo ? (
             <img
               src={photo}
               alt={title}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
             />
           ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-white/20">
+            <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-ink/25">
               <ImageIcon className="w-8 h-8" strokeWidth={1} />
-              <span className="text-xs">No photo</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em]">No photo</span>
             </div>
           )}
-          <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
+          {/* Ref tag */}
+          <span className="absolute top-2 left-2 bg-paper2 border border-ink font-mono text-[9px] font-semibold tracking-[0.12em] uppercase px-1.5 py-0.5">
+            REF·{id.slice(0, 4).toUpperCase()}
+          </span>
         </div>
 
         {/* Info */}
-        <div className="p-4 border-t border-white/[0.05]">
-          <h3 className="text-white text-sm font-semibold leading-tight line-clamp-2 mb-3">
+        <div className="p-4">
+          <h3 className="text-ink text-sm font-bold leading-tight line-clamp-2 mb-3">
             {title}
           </h3>
-          <div className="flex items-end justify-between">
+          <div className="flex items-end justify-between font-mono">
             <div className="flex items-baseline gap-1">
-              <span className="gradient-text text-base font-bold">{price_per_day}</span>
-              <span className="text-white/35 text-xs">CSPR / day</span>
+              <span className="text-accent text-base font-bold">{price_per_day}</span>
+              <span className="text-ink/45 text-[10px] uppercase tracking-wide">CSPR/day</span>
             </div>
-            <span className="text-white/25 text-xs">{deposit_amount} dep.</span>
+            <span className="text-ink/40 text-[10px] uppercase tracking-wide">
+              dep {deposit_amount}
+            </span>
           </div>
         </div>
       </div>

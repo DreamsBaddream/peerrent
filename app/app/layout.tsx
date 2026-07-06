@@ -1,16 +1,23 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
+import { Archivo, Archivo_Black, IBM_Plex_Mono } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 import Navbar from "@/components/Navbar"
 import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 })
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const archivoBlack = Archivo_Black({
+  variable: "--font-archivo-black",
+  weight: "400",
+  subsets: ["latin"],
+})
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
 })
 
@@ -28,20 +35,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${archivo.variable} ${archivoBlack.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#030712] text-white">
+      <body className="min-h-full flex flex-col">
         <Navbar />
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: "rgba(5, 8, 22, 0.95)",
-              backdropFilter: "blur(20px)",
-              color: "#f9fafb",
-              border: "1px solid rgba(255, 255, 255, 0.08)",
-              borderRadius: "12px",
-              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.5)",
+              background: "#faf8f1",
+              color: "#1c1a13",
+              border: "1px solid #1c1a13",
+              borderRadius: "0",
+              boxShadow: "4px 4px 0 rgba(28, 26, 19, 0.15)",
+              fontFamily: "var(--font-plex-mono), monospace",
+              fontSize: "13px",
             },
           }}
         />

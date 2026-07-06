@@ -16,7 +16,7 @@ export async function PATCH(
     // Verify ownership
     const { data: listing, error: fetchError } = await supabase
       .from("listings")
-      .select("owner_id, status")
+      .select("owner_id")
       .eq("id", id)
       .single()
 

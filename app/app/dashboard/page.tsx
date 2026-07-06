@@ -6,10 +6,14 @@ import toast from "react-hot-toast"
 import { Listing, Rental } from "@/lib/types"
 import { User, Package, Plus, ExternalLink } from "lucide-react"
 
+type RentalWithListing = Rental & {
+  listing?: { title: string; photos: string[] } | null
+}
+
 export default function DashboardPage() {
   const [userId, setUserId] = useState<string | null>(null)
   const [listings, setListings] = useState<Listing[]>([])
-  const [rentals, setRentals] = useState<Rental[]>([])
+  const [rentals, setRentals] = useState<RentalWithListing[]>([])
   const [loadingListings, setLoadingListings] = useState(true)
   const [loadingRentals, setLoadingRentals] = useState(true)
 
@@ -71,15 +75,15 @@ export default function DashboardPage() {
   if (!userId) {
     return (
       <div className="max-w-md mx-auto px-4 py-32 text-center">
-        <div className="card rounded-2xl p-10">
-          <div className="w-14 h-14 rounded-full glass flex items-center justify-center mx-auto mb-5">
-            <User className="w-6 h-6 text-white/30" strokeWidth={1.5} />
+        <div className="card-log p-10">
+          <div className="w-14 h-14 border border-ink/30 flex items-center justify-center mx-auto mb-5">
+            <User className="w-6 h-6 text-ink/35" strokeWidth={1.5} />
           </div>
-          <p className="text-white font-semibold mb-1">Sign in to continue</p>
-          <p className="text-white/35 text-sm mb-6">
+          <p className="text-ink font-bold mb-1">Sign in to continue</p>
+          <p className="text-ink/50 text-sm mb-6">
             View your listings and active rentals.
           </p>
-          <Link href="/signup" className="inline-block px-6 py-3 rounded-xl btn-gradient text-sm">
+          <Link href="/signup" className="btn-accent inline-block px-6 py-3">
             Sign In
           </Link>
         </div>
@@ -90,12 +94,12 @@ export default function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12 space-y-14">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-white/35 text-sm mt-0.5">Manage your listings and rentals</p>
+          <p className="mono-label mb-1.5">Operator Log</p>
+          <h1 className="font-display text-2xl uppercase tracking-tight text-ink">Dashboard</h1>
         </div>
-        <Link href="/list" className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl btn-gradient text-sm">
+        <Link href="/list" className="btn-accent flex items-center gap-1.5 px-4 py-2.5">
           <Plus className="w-4 h-4" strokeWidth={2.5} />
           List Item
         </Link>
@@ -104,34 +108,36 @@ export default function DashboardPage() {
       {/* My Listings */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest shrink-0">My Listings</h2>
-          <div className="flex-1 h-px bg-white/[0.05]" />
+          <h2 className="mono-label text-ink/70 shrink-0">My Listings</h2>
+          <div className="rule flex-1" />
           {!loadingListings && (
-            <span className="text-xs text-white/20 shrink-0">{listings.length} item{listings.length !== 1 ? "s" : ""}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40 shrink-0">
+              {String(listings.length).padStart(2, "0")} item{listings.length !== 1 ? "s" : ""}
+            </span>
           )}
         </div>
 
         {loadingListings ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="card rounded-2xl h-52 animate-pulse" />
+              <div key={i} className="card-log h-52 animate-pulse" />
             ))}
           </div>
         ) : listings.length === 0 ? (
-          <div className="card rounded-2xl p-10 text-center">
-            <div className="w-10 h-10 rounded-full glass flex items-center justify-center mx-auto mb-4">
-              <Package className="w-4 h-4 text-white/25" strokeWidth={1.5} />
+          <div className="card-log p-10 text-center">
+            <div className="w-10 h-10 border border-ink/30 flex items-center justify-center mx-auto mb-4">
+              <Package className="w-4 h-4 text-ink/30" strokeWidth={1.5} />
             </div>
-            <p className="text-white/35 text-sm mb-1">No listings yet.</p>
-            <Link href="/list" className="text-xs gradient-text hover:opacity-80 transition-opacity">
+            <p className="text-ink/50 text-sm mb-1">No listings yet.</p>
+            <Link href="/list" className="link-u font-mono text-[11px] uppercase tracking-[0.1em] text-ink/70">
               Create your first listing →
             </Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {listings.map((listing) => (
-              <div key={listing.id} className="card rounded-2xl overflow-hidden">
-                <div className="aspect-[16/9] bg-white/[0.03]">
+              <div key={listing.id} className="card-log card-log-hover overflow-hidden">
+                <div className="aspect-[16/9] bg-ink/[0.04] border-b border-ink">
                   {listing.photos?.[0] ? (
                     <img
                       src={listing.photos[0]}
@@ -139,36 +145,32 @@ export default function DashboardPage() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white/15 text-xs">
+                    <div className="w-full h-full flex items-center justify-center font-mono text-[10px] uppercase tracking-wide text-ink/25">
                       No photo
                     </div>
                   )}
                 </div>
-                <div className="p-4 border-t border-white/[0.05]">
-                  <p className="text-white text-sm font-semibold truncate mb-1.5">{listing.title}</p>
+                <div className="p-4">
+                  <p className="text-ink text-sm font-bold truncate mb-1.5">{listing.title}</p>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="gradient-text text-sm font-bold">{listing.price_per_day} CSPR</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      listing.is_available
-                        ? "bg-emerald-400/10 text-emerald-400"
-                        : "bg-red-400/10 text-red-400"
-                    }`}>
+                    <span className="font-mono text-sm font-bold text-accent">{listing.price_per_day} CSPR</span>
+                    <span className={`stamp ${listing.is_available ? "stamp-ok" : "stamp-err"}`}>
                       {listing.is_available ? "Available" : "Rented"}
                     </span>
                   </div>
                   <div className="flex gap-2">
                     <Link
                       href={`/edit/${listing.id}`}
-                      className="flex-1 text-center text-xs py-1.5 rounded-lg glass text-white/45 hover:text-white transition-colors"
+                      className="btn-line flex-1 text-center text-[11px] py-1.5"
                     >
                       Edit
                     </Link>
                     <button
                       onClick={() => toggleAvailability(listing.id, listing.is_available)}
-                      className={`flex-1 text-xs py-1.5 rounded-lg border transition-colors ${
+                      className={`flex-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] py-1.5 border transition-colors ${
                         listing.is_available
-                          ? "border-red-500/20 text-red-400 hover:bg-red-500/10"
-                          : "border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10"
+                          ? "border-err/50 text-err hover:bg-err hover:text-paper2"
+                          : "border-ok/50 text-ok hover:bg-ok hover:text-paper2"
                       }`}
                     >
                       {listing.is_available ? "Unlist" : "Relist"}
@@ -184,23 +186,25 @@ export default function DashboardPage() {
       {/* My Rentals */}
       <section>
         <div className="flex items-center gap-4 mb-6">
-          <h2 className="text-xs font-semibold text-white/40 uppercase tracking-widest shrink-0">My Rentals</h2>
-          <div className="flex-1 h-px bg-white/[0.05]" />
+          <h2 className="mono-label text-ink/70 shrink-0">My Rentals</h2>
+          <div className="rule flex-1" />
           {!loadingRentals && (
-            <span className="text-xs text-white/20 shrink-0">{rentals.length} rental{rentals.length !== 1 ? "s" : ""}</span>
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink/40 shrink-0">
+              {String(rentals.length).padStart(2, "0")} rental{rentals.length !== 1 ? "s" : ""}
+            </span>
           )}
         </div>
 
         {loadingRentals ? (
           <div className="space-y-3">
             {[1, 2].map((i) => (
-              <div key={i} className="card rounded-2xl h-20 animate-pulse" />
+              <div key={i} className="card-log h-20 animate-pulse" />
             ))}
           </div>
         ) : rentals.length === 0 ? (
-          <div className="card rounded-2xl p-10 text-center">
-            <p className="text-white/35 text-sm mb-1">No rentals yet.</p>
-            <Link href="/" className="text-xs gradient-text hover:opacity-80 transition-opacity">
+          <div className="card-log p-10 text-center">
+            <p className="text-ink/50 text-sm mb-1">No rentals yet.</p>
+            <Link href="/" className="link-u font-mono text-[11px] uppercase tracking-[0.1em] text-ink/70">
               Browse items to rent →
             </Link>
           </div>
@@ -209,42 +213,51 @@ export default function DashboardPage() {
             {rentals.map((rental) => (
               <div
                 key={rental.id}
-                className="card rounded-2xl px-5 py-4 flex items-center justify-between"
+                className="card-log px-5 py-4 flex items-center justify-between gap-4"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-3">
-                    <p className="text-white text-sm font-medium font-mono">
-                      #{rental.id.slice(0, 8)}
-                    </p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
-                      rental.status === "active"
-                        ? "bg-emerald-400/10 text-emerald-400"
-                        : rental.status === "returned"
-                        ? "bg-white/[0.06] text-white/35"
-                        : "bg-red-400/10 text-red-400"
-                    }`}>
-                      {rental.status}
-                    </span>
-                  </div>
-                  <p className="text-white/30 text-xs">
-                    {rental.start_date} → {rental.end_date}
-                  </p>
-                  {rental.tx_hash && (
-                    <a
-                      href={`https://testnet.cspr.live/deploy/${rental.tx_hash}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-emerald-400/60 hover:text-emerald-400 font-mono transition-colors"
-                    >
-                      {rental.tx_hash.slice(0, 12)}…
-                      <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
-                    </a>
+                <div className="flex items-center gap-4 min-w-0">
+                  {rental.listing?.photos?.[0] && (
+                    <img
+                      src={rental.listing.photos[0]}
+                      alt={rental.listing?.title ?? "Rental item"}
+                      className="w-14 h-14 object-cover border border-ink shrink-0 hidden sm:block"
+                    />
                   )}
+                  <div className="space-y-1 min-w-0">
+                    <div className="flex items-center gap-3 flex-wrap">
+                      <p className="text-ink text-sm font-bold truncate">
+                        {rental.listing?.title ?? `Order #${rental.id.slice(0, 8)}`}
+                      </p>
+                      <span className={`stamp ${
+                        rental.status === "active"
+                          ? "stamp-ok"
+                          : rental.status === "returned"
+                          ? "stamp-ink"
+                          : "stamp-err"
+                      }`}>
+                        {rental.status}
+                      </span>
+                    </div>
+                    <p className="font-mono text-[11px] text-ink/45">
+                      {rental.start_date} → {rental.end_date}
+                    </p>
+                    {rental.tx_hash && (
+                      <a
+                        href={`https://testnet.cspr.live/deploy/${rental.tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 font-mono text-[11px] text-accent/80 hover:text-accent transition-colors"
+                      >
+                        {rental.tx_hash.slice(0, 12)}…
+                        <ExternalLink className="w-3 h-3" strokeWidth={1.5} />
+                      </a>
+                    )}
+                  </div>
                 </div>
                 {rental.status === "active" && (
                   <Link
                     href={`/return/${rental.id}`}
-                    className="px-4 py-2 rounded-xl btn-gradient text-xs"
+                    className="btn-ink px-4 py-2 text-[11px] shrink-0"
                   >
                     Return Item
                   </Link>

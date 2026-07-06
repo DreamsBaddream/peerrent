@@ -49,12 +49,28 @@ export async function POST(req: Request) {
       )
     }
 
+    // Resolve the rating target: the other party to the rental.
+    // Profile stats look ratings up by target_wallet, so fall back to the
+    // target's stored wallet when the client didn't supply one.
+    let resolvedTargetWallet: string | null = targetWallet ?? null
+    if (!resolvedTargetWallet) {
+      const targetUserId = isRenter ? ownerId : rental.renter_id
+      if (targetUserId) {
+        const { data: targetUser } = await supabase
+          .from("users")
+          .select("wallet_address")
+          .eq("id", targetUserId)
+          .single()
+        resolvedTargetWallet = targetUser?.wallet_address ?? null
+      }
+    }
+
     // Store rating in Supabase for record-keeping
     // The actual on-chain rating is triggered from the frontend via casper-js-sdk
     const { error: ratingError } = await supabase.from("ratings").insert({
       rental_id: rentalId,
       rater_id: raterId,
-      target_wallet: targetWallet,
+      target_wallet: resolvedTargetWallet,
       score,
     })
 

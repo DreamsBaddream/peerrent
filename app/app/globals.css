@@ -1,104 +1,235 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════
+   PEERRENT — EQUIPMENT LOGBOOK DESIGN SYSTEM
+   cream paper ▪ ink black ▪ safety orange ▪ hard borders
+   ═══════════════════════════════════════════════════════════ */
+
+@theme {
+  --color-paper: #f1ede2;
+  --color-paper2: #faf8f1;
+  --color-ink: #1c1a13;
+  --color-accent: #e04a00;
+  --color-ok: #256e3d;
+  --color-err: #b3261e;
+  --color-warn: #8a6400;
+
+  --font-sans: var(--font-archivo), system-ui, sans-serif;
+  --font-display: var(--font-archivo-black), system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
 body {
-  background: #030712;
-  background-image:
-    radial-gradient(ellipse 90% 60% at 50% -8%, rgba(52, 211, 153, 0.085) 0%, transparent 65%),
-    radial-gradient(ellipse 55% 40% at 88% 88%, rgba(34, 211, 238, 0.045) 0%, transparent 55%),
-    radial-gradient(ellipse 40% 35% at 8% 72%, rgba(52, 211, 153, 0.03) 0%, transparent 50%);
-  background-attachment: fixed;
-  color: #f9fafb;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  background-color: #f1ede2;
+  /* faint drafting-paper dot grid */
+  background-image: radial-gradient(rgba(28, 26, 19, 0.11) 1px, transparent 1px);
+  background-size: 24px 24px;
+  color: #1c1a13;
+  font-family: var(--font-archivo), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Glass morphism ── */
-.glass {
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+::selection {
+  background: #e04a00;
+  color: #faf8f1;
 }
 
-/* ── Gradient text (emerald → cyan) ── */
-.gradient-text {
-  background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Tailwind v4 preflight sets buttons to cursor:default — restore affordance */
+button:not(:disabled) {
+  cursor: pointer;
 }
 
-/* ── Card (glass surface with glow hover) ── */
-.card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+/* ── Entrance animation: staggered rise ── */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.card:hover,
-.group:hover .card {
-  border-color: rgba(52, 211, 153, 0.22);
-  box-shadow:
-    0 0 0 1px rgba(52, 211, 153, 0.05),
-    0 8px 32px rgba(0, 0, 0, 0.4),
-    0 0 48px rgba(52, 211, 153, 0.05);
+.rise {
+  animation: rise-in 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+.rise-1 { animation-delay: 0.06s; }
+.rise-2 { animation-delay: 0.12s; }
+.rise-3 { animation-delay: 0.18s; }
+.rise-4 { animation-delay: 0.24s; }
+.rise-5 { animation-delay: 0.30s; }
+
+/* ── Text links: always underlined, accent on hover ── */
+.link-u {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(224, 74, 0, 0.5);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.link-u:hover {
+  color: #e04a00;
+  text-decoration-color: #e04a00;
+}
+
+/* ── Paper card: hard border, offset shadow ── */
+.card-log {
+  background: #faf8f1;
+  border: 1px solid #1c1a13;
+  box-shadow: 4px 4px 0 rgba(28, 26, 19, 0.1);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.card-log-hover:hover,
+.group:hover .card-log-hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 rgba(28, 26, 19, 0.18);
+}
+
+/* ── Buttons: press-down mechanics ── */
+.btn-ink,
+.btn-accent,
+.btn-line {
+  font-family: var(--font-plex-mono), monospace;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border: 1px solid #1c1a13;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+
+.btn-ink {
+  background: #1c1a13;
+  color: #faf8f1;
+  box-shadow: 3px 3px 0 #e04a00;
+}
+
+.btn-accent {
+  background: #e04a00;
+  color: #faf8f1;
+  box-shadow: 3px 3px 0 #1c1a13;
+}
+
+.btn-ink:hover:not(:disabled),
+.btn-accent:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 #e04a00;
+}
+
+.btn-accent:hover:not(:disabled) {
+  box-shadow: 4px 4px 0 #1c1a13;
+}
+
+.btn-ink:active:not(:disabled),
+.btn-accent:active:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-line {
+  background: transparent;
+  color: #1c1a13;
+  box-shadow: none;
+}
+
+.btn-line:hover:not(:disabled) {
+  background: #1c1a13;
+  color: #faf8f1;
+}
+
+.btn-ink:disabled,
+.btn-accent:disabled,
+.btn-line:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
 }
 
 /* ── Form fields ── */
 .field {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  color: #f9fafb;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  background: #fffdf6;
+  border: 1px solid rgba(28, 26, 19, 0.45);
+  color: #1c1a13;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .field:focus {
   outline: none;
-  border-color: rgba(52, 211, 153, 0.45);
-  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.07);
+  border-color: #1c1a13;
+  box-shadow: 3px 3px 0 rgba(224, 74, 0, 0.35);
 }
 
 .field::placeholder {
-  color: rgba(249, 250, 251, 0.2);
+  color: rgba(28, 26, 19, 0.32);
 }
 
-/* ── Gradient button ── */
-.btn-gradient {
-  background: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
-  color: #030712;
+/* ── Stamp badges ── */
+.stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 0.2rem 0.55rem;
+  border: 1.5px solid currentColor;
+}
+
+.stamp-ok    { color: #256e3d; background: rgba(37, 110, 61, 0.07); }
+.stamp-err   { color: #b3261e; background: rgba(179, 38, 30, 0.07); }
+.stamp-warn  { color: #8a6400; background: rgba(138, 100, 0, 0.08); }
+.stamp-ink   { color: #1c1a13; background: transparent; }
+.stamp-accent{ color: #e04a00; background: rgba(224, 74, 0, 0.07); }
+
+.stamp-tilt { transform: rotate(-2deg); }
+
+/* big rubber-stamp verdict */
+@keyframes stamp-in {
+  0%   { transform: scale(1.7) rotate(-9deg); opacity: 0; }
+  55%  { transform: scale(0.94) rotate(-2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+
+.stamp-verdict {
+  animation: stamp-in 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  transform: rotate(-3deg);
+}
+
+/* ── Mono labels ── */
+.mono-label {
+  font-family: var(--font-plex-mono), monospace;
+  font-size: 0.625rem;
   font-weight: 600;
-  transition: opacity 0.18s ease, box-shadow 0.18s ease, transform 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(28, 26, 19, 0.55);
 }
 
-.btn-gradient:hover:not(:disabled) {
-  opacity: 0.88;
-  box-shadow: 0 4px 20px rgba(52, 211, 153, 0.28);
-  transform: translateY(-1px);
+/* ── Ledger rule ── */
+.rule {
+  height: 1px;
+  background: rgba(28, 26, 19, 0.25);
 }
 
-.btn-gradient:active:not(:disabled) {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.btn-gradient:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
+.rule-solid {
+  height: 1px;
+  background: #1c1a13;
 }
 
 /* ── Scrollbar ── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.07) transparent;
+  scrollbar-color: rgba(28, 26, 19, 0.3) transparent;
 }
 
-::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.07); border-radius: 99px; }
+::-webkit-scrollbar-thumb { background: rgba(28, 26, 19, 0.3); }
 
-/* ── Date picker theming ── */
+/* ── Date picker on light theme ── */
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(0.4);
   cursor: pointer;
+  opacity: 0.65;
 }

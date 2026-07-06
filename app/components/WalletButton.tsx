@@ -74,10 +74,10 @@ export default function WalletButton() {
     return (
       <button
         onClick={disconnect}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass font-mono text-xs text-white/55 hover:text-red-400 hover:border-red-500/25 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 border border-ink bg-paper font-mono text-[11px] font-medium text-ink/75 hover:text-err hover:border-err transition-colors"
         title="Click to disconnect wallet"
       >
-        <Wallet className="w-3 h-3 text-emerald-400" strokeWidth={2} />
+        <Wallet className="w-3 h-3 text-accent" strokeWidth={2} />
         {truncateKey(publicKey)}
       </button>
     )
@@ -88,7 +88,7 @@ export default function WalletButton() {
       data-wallet-btn
       onClick={connect}
       disabled={loading}
-      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg glass text-xs font-semibold text-white/55 hover:text-white transition-colors"
+      className="flex items-center gap-1.5 px-3 py-1.5 border border-ink/50 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink/65 hover:text-ink hover:border-ink transition-colors"
     >
       {loading ? (
         <Loader2 className="w-3 h-3 animate-spin" />

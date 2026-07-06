@@ -8,8 +8,8 @@ import { Check, Camera, RefreshCw } from "lucide-react"
 type Step = "phone" | "otp" | "selfie"
 
 const STEPS: { key: Step; label: string }[] = [
-  { key: "phone",  label: "Phone"    },
-  { key: "otp",   label: "Verify"   },
+  { key: "phone", label: "Phone" },
+  { key: "otp", label: "Verify" },
   { key: "selfie", label: "Identity" },
 ]
 
@@ -27,13 +27,11 @@ export default function SignupPage() {
   const streamRef = useRef<MediaStream | null>(null)
 
   useEffect(() => {
-    if (step === "selfie") {
-      setCameraError(false)
-      startCamera()
-    }
-    return () => {
-      if (step !== "selfie") stopCamera()
-    }
+    if (step !== "selfie") return
+    setCameraError(false)
+    startCamera()
+    // Stop the camera when leaving the selfie step or unmounting
+    return () => stopCamera()
   }, [step])
 
   async function handleSendOtp(e: React.FormEvent) {
@@ -130,6 +128,7 @@ export default function SignupPage() {
         const data = await res.json()
         if (!data.isLive) throw new Error(data.reason ?? "Liveness check failed — please try again")
         if (userId) localStorage.setItem("user_id", userId)
+        sessionStorage.removeItem("wallet_disconnected")
         toast.success("Identity verified! Welcome to PeerRent.")
         stopCamera()
         router.push("/")
@@ -149,10 +148,11 @@ export default function SignupPage() {
 
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {step === "phone" ? "Get started" : step === "otp" ? "Verify your number" : "One last step"}
+          <p className="mono-label mb-3">Operator Registration</p>
+          <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">
+            {step === "phone" ? "Get started" : step === "otp" ? "Verify number" : "One last step"}
           </h1>
-          <p className="text-white/40 text-sm">
+          <p className="text-ink/55 text-sm">
             {step === "phone"
               ? "New here? We'll create your account automatically."
               : step === "otp"
@@ -165,25 +165,23 @@ export default function SignupPage() {
         <div className="flex items-center justify-center mb-8">
           {STEPS.map((s, i) => (
             <div key={s.key} className="flex items-center">
-              <div className={`flex flex-col items-center gap-1.5 transition-opacity duration-300 ${i <= stepIdx ? "opacity-100" : "opacity-30"}`}>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+              <div className={`flex flex-col items-center gap-1.5 transition-opacity duration-300 ${i <= stepIdx ? "opacity-100" : "opacity-35"}`}>
+                <div className={`w-8 h-8 flex items-center justify-center font-mono text-xs font-bold border transition-all duration-300 ${
                   i < stepIdx
-                    ? "bg-gradient-to-br from-emerald-400 to-cyan-400 text-[#030712]"
+                    ? "bg-ink border-ink text-paper2"
                     : i === stepIdx
-                    ? "bg-gradient-to-br from-emerald-400 to-cyan-400 text-[#030712] ring-4 ring-emerald-400/20"
-                    : "glass text-white/40"
+                    ? "bg-accent border-ink text-paper2 shadow-[3px_3px_0_#1c1a13]"
+                    : "border-ink/40 text-ink/45"
                 }`}>
                   {i < stepIdx ? (
                     <Check className="w-3.5 h-3.5" strokeWidth={2.5} />
                   ) : i + 1}
                 </div>
-                <span className="text-xs text-white/35 hidden sm:block">{s.label}</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/50 hidden sm:block">{s.label}</span>
               </div>
               {i < STEPS.length - 1 && (
                 <div className={`w-16 h-px mx-2 mb-5 transition-colors duration-500 ${
-                  i < stepIdx
-                    ? "bg-gradient-to-r from-emerald-400 to-cyan-400"
-                    : "bg-white/[0.08]"
+                  i < stepIdx ? "bg-ink" : "bg-ink/20"
                 }`} />
               )}
             </div>
@@ -191,32 +189,30 @@ export default function SignupPage() {
         </div>
 
         {/* Card */}
-        <div className="card rounded-2xl p-6">
+        <div className="card-log p-6">
 
           {/* Phone step */}
           {step === "phone" && (
             <form onSubmit={handleSendOtp} className="space-y-4">
-              <div className="px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-400/80 mb-5">
+              <div className="px-3 py-2.5 border border-warn/50 bg-warn/5 font-mono text-[11px] text-warn mb-5">
                 Demo mode — any phone number works. OTP code is{" "}
-                <span className="font-mono font-bold text-amber-400">000000</span>
+                <span className="font-bold">000000</span>
               </div>
               <div>
-                <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider font-medium">
-                  Phone Number
-                </label>
+                <label className="mono-label block mb-1.5">Phone Number</label>
                 <input
                   type="tel"
                   placeholder="+1 555 000 0000"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
-                  className="field w-full rounded-xl px-4 py-3 text-sm"
+                  className="field w-full px-4 py-3 text-sm font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || !phone.trim()}
-                className="w-full py-3 rounded-xl btn-gradient text-sm"
+                className="btn-accent w-full py-3"
               >
                 {loading ? "Sending…" : "Continue"}
               </button>
@@ -227,9 +223,7 @@ export default function SignupPage() {
           {step === "otp" && (
             <form onSubmit={handleVerifyOtp} className="space-y-4">
               <div>
-                <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider font-medium">
-                  6-Digit Code
-                </label>
+                <label className="mono-label block mb-1.5">6-Digit Code</label>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -238,20 +232,20 @@ export default function SignupPage() {
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   required
-                  className="field w-full rounded-xl px-4 py-4 text-3xl tracking-[0.6em] text-center font-mono"
+                  className="field w-full px-4 py-4 text-3xl tracking-[0.6em] text-center font-mono"
                 />
               </div>
               <button
                 type="submit"
                 disabled={loading || otp.length !== 6}
-                className="w-full py-3 rounded-xl btn-gradient text-sm"
+                className="btn-accent w-full py-3"
               >
                 {loading ? "Verifying…" : "Verify Code"}
               </button>
               <button
                 type="button"
                 onClick={() => setStep("phone")}
-                className="w-full text-white/30 hover:text-white/60 text-xs transition-colors"
+                className="link-u w-full font-mono text-[11px] uppercase tracking-[0.1em] text-ink/55"
               >
                 Change phone number
               </button>
@@ -261,7 +255,7 @@ export default function SignupPage() {
           {/* Selfie step */}
           {step === "selfie" && (
             <div className="space-y-4">
-              <div className="relative bg-black rounded-2xl overflow-hidden aspect-video">
+              <div className="relative bg-ink overflow-hidden aspect-video border border-ink">
                 <video
                   ref={videoRef}
                   autoPlay
@@ -274,23 +268,23 @@ export default function SignupPage() {
                 />
                 {/* Face guide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-28 h-36 rounded-full border-2 border-white/25 border-dashed" />
+                  <div className="w-28 h-36 rounded-full border-2 border-paper2/40 border-dashed" />
                 </div>
                 {!streaming && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-black/70 backdrop-blur-sm">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-ink/80">
                     {cameraError ? (
                       <>
-                        <p className="text-red-400 text-xs">Camera access denied</p>
+                        <p className="font-mono text-[11px] uppercase tracking-wide text-err">Camera access denied</p>
                         <button
                           onClick={startCamera}
-                          className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg glass text-white text-xs hover:bg-white/[0.08] transition-colors"
+                          className="flex items-center gap-1.5 px-4 py-1.5 border border-paper2/50 font-mono text-[11px] uppercase tracking-wide text-paper2 hover:bg-paper2/10 transition-colors"
                         >
                           <RefreshCw className="w-3 h-3" />
                           Retry
                         </button>
                       </>
                     ) : (
-                      <p className="text-white/35 text-xs">Starting camera…</p>
+                      <p className="font-mono text-[11px] uppercase tracking-wide text-paper2/50">Starting camera…</p>
                     )}
                   </div>
                 )}
@@ -299,7 +293,7 @@ export default function SignupPage() {
               <button
                 onClick={handleCaptureSelfie}
                 disabled={loading || !streaming}
-                className="w-full py-3 rounded-xl btn-gradient text-sm flex items-center justify-center gap-2"
+                className="btn-accent w-full py-3 flex items-center justify-center gap-2"
               >
                 <Camera className="w-4 h-4" strokeWidth={2} />
                 {loading ? "Verifying…" : "Capture Selfie"}

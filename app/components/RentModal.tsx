@@ -90,7 +90,7 @@ export default function RentModal({
     return (
       <a
         href="/signup"
-        className="w-full py-3 rounded-xl glass text-sm font-semibold text-white/50 hover:text-white hover:border-emerald-500/30 transition-colors flex items-center justify-center"
+        className="btn-line w-full py-3 flex items-center justify-center"
       >
         Sign in to rent this item
       </a>
@@ -99,7 +99,7 @@ export default function RentModal({
 
   if (ownerId && userId === ownerId) {
     return (
-      <div className="w-full py-3 rounded-xl glass text-white/30 text-sm font-semibold flex items-center justify-center">
+      <div className="w-full py-3 border border-dashed border-ink/40 font-mono text-xs uppercase tracking-[0.1em] text-ink/45 flex items-center justify-center">
         This is your listing
       </div>
     )
@@ -109,23 +109,25 @@ export default function RentModal({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="w-full py-3.5 rounded-xl btn-gradient text-sm"
+        className="btn-accent w-full py-3.5"
       >
         Rent This Item
       </button>
 
       {open && (
         <div
-          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/65 backdrop-blur-sm p-4"
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/50 p-4"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
         >
-          <div className="card rounded-2xl p-6 w-full max-w-md">
+          <div className="card-log p-6 w-full max-w-md bg-paper2">
             {/* Header */}
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-white text-base font-semibold">Confirm Rental</h2>
+              <h2 className="font-display text-ink text-base uppercase tracking-tight">
+                Rental Order
+              </h2>
               <button
                 onClick={() => setOpen(false)}
-                className="w-7 h-7 rounded-lg glass flex items-center justify-center text-white/40 hover:text-white transition-colors"
+                className="w-7 h-7 border border-ink/40 flex items-center justify-center text-ink/50 hover:text-ink hover:border-ink transition-colors"
                 aria-label="Close"
               >
                 <X className="w-3.5 h-3.5" strokeWidth={2} />
@@ -136,56 +138,56 @@ export default function RentModal({
               {/* Dates */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider">Start Date</label>
+                  <label className="mono-label block mb-1.5">Start Date</label>
                   <input
                     type="date"
                     value={startDate}
                     min={new Date().toISOString().split("T")[0]}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="field w-full rounded-xl px-3 py-2.5 text-sm"
+                    className="field w-full px-3 py-2.5 text-sm font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-white/40 mb-1.5 uppercase tracking-wider">End Date</label>
+                  <label className="mono-label block mb-1.5">End Date</label>
                   <input
                     type="date"
                     value={endDate}
                     min={startDate || new Date().toISOString().split("T")[0]}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="field w-full rounded-xl px-3 py-2.5 text-sm"
+                    className="field w-full px-3 py-2.5 text-sm font-mono"
                   />
                 </div>
               </div>
 
-              {/* Price summary */}
+              {/* Price summary — ledger style */}
               {days > 0 && (
-                <div className="glass rounded-xl p-4 space-y-2.5">
+                <div className="border border-ink bg-paper p-4 space-y-2.5 font-mono">
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/50">
+                    <span className="text-ink/60">
                       {days} day{days !== 1 ? "s" : ""} × {pricePerDay} CSPR
                     </span>
                     <div className="text-right">
-                      <span className="text-white">{days * pricePerDay} CSPR</span>
-                      <span className="block text-xs text-white/30">
+                      <span className="text-ink">{days * pricePerDay} CSPR</span>
+                      <span className="block text-[10px] text-ink/40">
                         ~${(days * pricePerDay * csprUsd).toFixed(2)}
                       </span>
                     </div>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-white/50">Security deposit</span>
+                    <span className="text-ink/60">Security deposit</span>
                     <div className="text-right">
-                      <span className="text-white">{depositAmount} CSPR</span>
-                      <span className="block text-xs text-white/30">
+                      <span className="text-ink">{depositAmount} CSPR</span>
+                      <span className="block text-[10px] text-ink/40">
                         ~${(depositAmount * csprUsd).toFixed(2)}
                       </span>
                     </div>
                   </div>
-                  <div className="h-px bg-white/[0.07]" />
+                  <div className="rule-solid" />
                   <div className="flex justify-between">
-                    <span className="text-white font-semibold text-sm">Total</span>
+                    <span className="text-ink font-bold text-sm uppercase tracking-wide">Total</span>
                     <div className="text-right">
-                      <span className="gradient-text font-bold text-sm">{total} CSPR</span>
-                      <span className="block text-xs text-white/30">
+                      <span className="text-accent font-bold text-sm">{total} CSPR</span>
+                      <span className="block text-[10px] text-ink/40">
                         ~${(total * csprUsd).toFixed(2)} USD
                       </span>
                     </div>
@@ -194,7 +196,7 @@ export default function RentModal({
               )}
 
               {!publicKey && (
-                <p className="text-amber-400/80 text-xs bg-amber-500/10 border border-amber-500/20 rounded-xl px-3 py-2">
+                <p className="font-mono text-[11px] text-warn border border-warn/50 bg-warn/5 px-3 py-2">
                   Connect your Casper Wallet to proceed.
                 </p>
               )}
@@ -204,7 +206,7 @@ export default function RentModal({
             <div className="flex gap-3 mt-6">
               <button
                 onClick={() => setOpen(false)}
-                className="flex-1 py-2.5 rounded-xl glass text-white/50 hover:text-white text-sm transition-colors"
+                className="btn-line flex-1 py-2.5"
               >
                 Cancel
               </button>
@@ -212,9 +214,9 @@ export default function RentModal({
                 <button
                   onClick={handleConfirm}
                   disabled={loading || !startDate || !endDate}
-                  className="flex-1 py-2.5 rounded-xl btn-gradient text-sm"
+                  className="btn-accent flex-1 py-2.5"
                 >
-                  {loading ? "Processing…" : "Confirm Rental"}
+                  {loading ? "Processing…" : "Confirm"}
                 </button>
               ) : (
                 <button
@@ -222,7 +224,7 @@ export default function RentModal({
                     setOpen(false)
                     document.querySelector<HTMLButtonElement>("[data-wallet-btn]")?.click()
                   }}
-                  className="flex-1 py-2.5 rounded-xl btn-gradient text-sm"
+                  className="btn-ink flex-1 py-2.5"
                 >
                   Connect Wallet
                 </button>

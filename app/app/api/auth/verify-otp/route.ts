@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const { data, error } = await supabase
       .from("users")
       .upsert(
-        { phone, verified: false },
+        { phone },
         { onConflict: "phone", ignoreDuplicates: false }
       )
       .select("id")

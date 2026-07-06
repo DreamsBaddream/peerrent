@@ -26,7 +26,7 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-white/15 text-white/40 hover:border-emerald-500/40 hover:text-emerald-400 transition-colors text-sm"
+        className="flex items-center gap-2 px-4 py-2.5 border border-dashed border-ink/45 font-mono text-xs uppercase tracking-[0.1em] text-ink/55 hover:border-accent hover:text-accent transition-colors"
       >
         <ImagePlus className="w-4 h-4" strokeWidth={1.5} />
         Add Photos
@@ -46,7 +46,7 @@ export default function PhotoUpload({ onChange }: PhotoUploadProps) {
               key={i}
               src={src}
               alt={`Preview ${i + 1}`}
-              className="w-20 h-20 object-cover rounded-xl border border-white/[0.07]"
+              className="w-20 h-20 object-cover border border-ink"
             />
           ))}
         </div>

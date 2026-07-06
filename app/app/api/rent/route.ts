@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
     const { data, error } = await supabase
       .from("rentals")
-      .select("*")
+      .select("*, listing:listings!rentals_listing_id_fkey(title, photos)")
       .eq("renter_id", renterId)
       .order("created_at", { ascending: false })
 
@@ -69,14 +69,16 @@ export async function POST(req: NextRequest) {
     const start = new Date(startDate)
     const end = new Date(endDate)
     const diffMs = end.getTime() - start.getTime()
-    const rentalDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24))
 
-    if (rentalDays <= 0) {
+    if (diffMs < 0) {
       return Response.json(
-        { error: "End date must be after start date" },
+        { error: "End date must not be before start date" },
         { status: 400 }
       )
     }
+
+    // Same-day rentals count as 1 day (matches the price shown in the UI)
+    const rentalDays = Math.max(1, Math.ceil(diffMs / (1000 * 60 * 60 * 24)))
 
     // Update wallet address if provided
     if (renterWallet) {

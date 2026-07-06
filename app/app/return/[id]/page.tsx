@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import PhotoUpload from "@/components/PhotoUpload"
 import { Rental } from "@/lib/types"
-import { CheckCircle2, AlertCircle, Star } from "lucide-react"
+import { Star } from "lucide-react"
 
 interface ReturnResult {
   damage_detected: boolean
@@ -58,7 +58,8 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         throw new Error(err.error ?? "Return failed")
       }
       const data = await res.json()
-      setResult({ damage_detected: data.damage_detected ?? false, notes: data.notes })
+      // API returns { damageDetected, reason, ... }
+      setResult({ damage_detected: data.damageDetected ?? false, notes: data.reason })
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Something went wrong")
     } finally {
@@ -93,8 +94,9 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
     <div className="max-w-2xl mx-auto px-4 py-12">
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white mb-2">Return Item</h1>
-        <p className="text-white/40 text-sm">
+        <p className="mono-label mb-2">Return Inspection</p>
+        <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">Return Item</h1>
+        <p className="text-ink/55 text-sm">
           Upload after-photos so our AI can check for damage.
         </p>
       </div>
@@ -102,16 +104,14 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
       {/* Before photos */}
       {rental?.before_photos?.length ? (
         <div className="mb-6">
-          <p className="text-xs font-semibold text-white/35 uppercase tracking-wider mb-3">
-            Before Photos (at pickup)
-          </p>
+          <p className="mono-label mb-3">Before Photos (at pickup)</p>
           <div className="flex gap-2 flex-wrap">
             {rental.before_photos.map((url, i) => (
               <img
                 key={i}
                 src={url}
                 alt={`Before ${i + 1}`}
-                className="w-24 h-24 object-cover rounded-xl border border-white/[0.07]"
+                className="w-24 h-24 object-cover border border-ink"
               />
             ))}
           </div>
@@ -120,17 +120,17 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
 
       {/* Return form */}
       {!result && (
-        <div className="card rounded-2xl p-6 space-y-5">
+        <div className="card-log p-6 space-y-5">
           <div>
-            <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">
-              After Photos <span className="text-red-400 normal-case text-xs font-normal">* required</span>
+            <p className="mono-label mb-4">
+              After Photos <span className="text-accent normal-case">* required</span>
             </p>
             <PhotoUpload onChange={setAfterPhotos} />
           </div>
           <button
             onClick={handleReturn}
             disabled={loading || !afterPhotos.length}
-            className="w-full py-3.5 rounded-xl btn-gradient text-sm"
+            className="btn-accent w-full py-3.5"
           >
             {loading ? "Analyzing with AI…" : "Submit Return"}
           </button>
@@ -140,40 +140,46 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
       {/* Result */}
       {result && (
         <div className="space-y-5">
-          <div className={`card rounded-2xl p-6 border ${
-            result.damage_detected
-              ? "border-red-500/25 bg-red-500/[0.06]"
-              : "border-emerald-500/25 bg-emerald-500/[0.06]"
+          <div className={`card-log p-8 text-center ${
+            result.damage_detected ? "bg-err/[0.04]" : "bg-ok/[0.04]"
           }`}>
-            <div className="flex items-center gap-3 mb-2">
-              {result.damage_detected ? (
-                <AlertCircle className="w-6 h-6 text-red-400 shrink-0" strokeWidth={1.75} />
-              ) : (
-                <CheckCircle2 className="w-6 h-6 text-emerald-400 shrink-0" strokeWidth={1.75} />
-              )}
-              <p className={`font-semibold ${result.damage_detected ? "text-red-300" : "text-emerald-300"}`}>
-                {result.damage_detected ? "Damage detected — deposit held" : "No damage — deposit refunded!"}
-              </p>
+            {/* Rubber-stamp verdict */}
+            <div
+              className={`stamp-verdict inline-block border-[3px] font-display uppercase text-xl md:text-2xl px-5 py-2.5 tracking-tight mb-4 ${
+                result.damage_detected
+                  ? "border-err text-err"
+                  : "border-ok text-ok"
+              }`}
+            >
+              {result.damage_detected ? "Damage Detected" : "Passed Inspection"}
             </div>
+            <p className={`font-mono text-xs uppercase tracking-[0.1em] mb-3 ${
+              result.damage_detected ? "text-err" : "text-ok"
+            }`}>
+              {result.damage_detected ? "Deposit held on-chain" : "Deposit refunded"}
+            </p>
             {result.notes && (
-              <p className="text-sm text-white/50 mt-2 leading-relaxed pl-9">{result.notes}</p>
+              <p className="text-sm text-ink/60 leading-relaxed max-w-md mx-auto">
+                <span className="mono-label block mb-1">AI Inspector Notes</span>
+                {result.notes}
+              </p>
             )}
           </div>
 
           {/* Rating */}
           {!ratingDone ? (
-            <div className="card rounded-2xl p-6">
-              <h2 className="text-white font-semibold mb-1">Rate this experience</h2>
-              <p className="text-white/35 text-xs mb-5">How was your rental?</p>
+            <div className="card-log p-6">
+              <h2 className="text-ink font-bold mb-1">Rate this experience</h2>
+              <p className="text-ink/45 text-xs mb-5">How was your rental?</p>
               <div className="flex gap-2 mb-5">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
                     key={n}
                     onClick={() => setRating(n)}
-                    className={`flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-1 py-2.5 font-mono text-sm font-bold border transition-all ${
                       rating >= n
-                        ? "btn-gradient"
-                        : "glass text-white/30 hover:text-white"
+                        ? "bg-accent border-ink text-paper2 shadow-[2px_2px_0_#1c1a13]"
+                        : "border-ink/35 text-ink/40 hover:text-ink hover:border-ink"
                     }`}
                   >
                     <Star className={`w-3.5 h-3.5 ${rating >= n ? "fill-current" : ""}`} strokeWidth={rating >= n ? 0 : 1.5} />
@@ -184,17 +190,17 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
               <button
                 onClick={handleRate}
                 disabled={ratingSubmitting || !rating}
-                className="w-full py-3 rounded-xl btn-gradient text-sm"
+                className="btn-ink w-full py-3"
               >
                 {ratingSubmitting ? "Submitting…" : "Submit Rating"}
               </button>
             </div>
           ) : (
-            <div className="card rounded-2xl p-8 text-center">
-              <p className="text-white/40 text-sm mb-5">All done! Thanks for using PeerRent.</p>
+            <div className="card-log p-8 text-center">
+              <p className="text-ink/55 text-sm mb-5">All done! Thanks for using PeerRent.</p>
               <button
                 onClick={() => router.push("/dashboard")}
-                className="px-6 py-3 rounded-xl btn-gradient text-sm"
+                className="btn-accent px-6 py-3"
               >
                 Back to Dashboard
               </button>

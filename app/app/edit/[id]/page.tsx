@@ -74,7 +74,7 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-24">
-        <div className="card rounded-2xl h-96 animate-pulse" />
+        <div className="card-log h-96 animate-pulse" />
       </div>
     )
   }
@@ -82,42 +82,43 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
   return (
     <div className="max-w-2xl mx-auto px-4 py-12">
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-white mb-2">Edit Listing</h1>
-        <p className="text-white/40 text-sm">Update your listing details.</p>
+        <p className="mono-label mb-2">Amend Entry</p>
+        <h1 className="font-display text-3xl uppercase tracking-tight text-ink mb-2">Edit Listing</h1>
+        <p className="text-ink/55 text-sm">Update your listing details.</p>
       </div>
 
       <form onSubmit={handleSave} className="space-y-4">
-        <div className="card rounded-2xl p-5 space-y-4">
-          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider">Details</p>
+        <div className="card-log p-5 space-y-4">
+          <p className="mono-label">01 — Details</p>
           <div>
-            <label className="block text-xs text-white/45 mb-1.5 font-medium">
-              Title <span className="text-red-400">*</span>
+            <label className="block text-xs text-ink/60 mb-1.5 font-medium">
+              Title <span className="text-accent">*</span>
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              className="field w-full rounded-xl px-4 py-3 text-sm"
+              className="field w-full px-4 py-3 text-sm"
             />
           </div>
           <div>
-            <label className="block text-xs text-white/45 mb-1.5 font-medium">Description</label>
+            <label className="block text-xs text-ink/60 mb-1.5 font-medium">Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={4}
-              className="field w-full rounded-xl px-4 py-3 text-sm resize-none"
+              className="field w-full px-4 py-3 text-sm resize-none"
             />
           </div>
         </div>
 
-        <div className="card rounded-2xl p-5">
-          <p className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-4">Pricing</p>
+        <div className="card-log p-5">
+          <p className="mono-label mb-4">02 — Pricing</p>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs text-white/45 mb-1.5 font-medium">
-                Price / Day <span className="text-red-400">*</span>
+              <label className="block text-xs text-ink/60 mb-1.5 font-medium">
+                Price / Day <span className="text-accent">*</span>
               </label>
               <div className="relative">
                 <input
@@ -127,14 +128,14 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
                   value={pricePerDay}
                   onChange={(e) => setPricePerDay(e.target.value)}
                   required
-                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                  className="field w-full pl-4 pr-14 py-3 text-sm font-mono"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">CSPR</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase text-ink/35 pointer-events-none">CSPR</span>
               </div>
             </div>
             <div>
-              <label className="block text-xs text-white/45 mb-1.5 font-medium">
-                Deposit <span className="text-red-400">*</span>
+              <label className="block text-xs text-ink/60 mb-1.5 font-medium">
+                Deposit <span className="text-accent">*</span>
               </label>
               <div className="relative">
                 <input
@@ -144,9 +145,9 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
                   value={depositAmount}
                   onChange={(e) => setDepositAmount(e.target.value)}
                   required
-                  className="field w-full rounded-xl pl-4 pr-14 py-3 text-sm"
+                  className="field w-full pl-4 pr-14 py-3 text-sm font-mono"
                 />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/25 pointer-events-none">CSPR</span>
+                <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase text-ink/35 pointer-events-none">CSPR</span>
               </div>
             </div>
           </div>
@@ -156,14 +157,14 @@ export default function EditListingPage(props: PageProps<"/edit/[id]">) {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 py-3 rounded-xl glass text-white/45 hover:text-white text-sm transition-colors"
+            className="btn-line flex-1 py-3"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 py-3 rounded-xl btn-gradient text-sm"
+            className="btn-accent flex-1 py-3"
           >
             {saving ? "Saving…" : "Save Changes"}
           </button>
