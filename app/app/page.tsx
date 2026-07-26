@@ -24,7 +24,6 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden">
-        {/* hero background image */}
         <div className="absolute inset-0 -z-10">
           <Image
             src="/hero-orb.png"
@@ -34,7 +33,6 @@ export default async function HomePage() {
             sizes="100vw"
             className="object-cover object-right"
           />
-          {/* paper scrim: solid over the copy (left), clears toward the orb (right) */}
           <div className="absolute inset-0 bg-gradient-to-r from-paper via-paper/90 to-paper/40" />
         </div>
 
