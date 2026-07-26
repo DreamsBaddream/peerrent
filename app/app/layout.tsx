@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 import { Archivo, Archivo_Black, IBM_Plex_Mono } from "next/font/google"
 import { Toaster } from "react-hot-toast"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import { CsprPriceProvider } from "@/components/CsprPrice"
 import "./globals.css"
 
 const archivo = Archivo({
@@ -38,22 +40,25 @@ export default function RootLayout({
       className={`${archivo.variable} ${archivoBlack.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar />
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: "#faf8f1",
-              color: "#1c1a13",
-              border: "1px solid #1c1a13",
-              borderRadius: "0",
-              boxShadow: "4px 4px 0 rgba(28, 26, 19, 0.15)",
-              fontFamily: "var(--font-plex-mono), monospace",
-              fontSize: "13px",
-            },
-          }}
-        />
-        <main className="flex-1">{children}</main>
+        <CsprPriceProvider>
+          <Navbar />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: "#faf8f1",
+                color: "#1c1a13",
+                border: "1px solid #1c1a13",
+                borderRadius: "0",
+                boxShadow: "4px 4px 0 rgba(28, 26, 19, 0.15)",
+                fontFamily: "var(--font-plex-mono), monospace",
+                fontSize: "13px",
+              },
+            }}
+          />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CsprPriceProvider>
       </body>
     </html>
   )

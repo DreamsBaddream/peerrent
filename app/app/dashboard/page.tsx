@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { Listing, Rental } from "@/lib/types"
+import UsdEstimate from "@/components/CsprPrice"
 import { User, Package, Plus, ExternalLink } from "lucide-react"
 
 type RentalWithListing = Rental & {
@@ -149,7 +150,10 @@ export default function DashboardPage() {
                 <div className="p-4">
                   <p className="text-ink text-sm font-bold truncate mb-1.5">{listing.title}</p>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-mono text-sm font-bold text-accent">{listing.price_per_day} CSPR</span>
+                    <span className="font-mono text-sm font-bold text-accent">
+                      {listing.price_per_day} CSPR{" "}
+                      <UsdEstimate cspr={listing.price_per_day} per="day" className="text-[10px] font-normal" />
+                    </span>
                     <span className={`stamp ${listing.is_available ? "stamp-ok" : "stamp-err"}`}>
                       {listing.is_available ? "Available" : "Rented"}
                     </span>

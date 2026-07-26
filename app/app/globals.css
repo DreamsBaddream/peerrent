@@ -14,6 +14,10 @@
   --font-mono: var(--font-plex-mono), ui-monospace, monospace;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   background-color: #f1ede2;
 
@@ -23,6 +27,11 @@ body {
   font-family: var(--font-archivo), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid #e04a00;
+  outline-offset: 2px;
 }
 
 ::selection {
@@ -215,4 +224,69 @@ button:not(:disabled) {
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.65;
+}
+
+@keyframes scan-sweep {
+  0%   { top: 0%; }
+  100% { top: 100%; }
+}
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e04a00;
+  box-shadow: 0 0 12px 2px rgba(224, 74, 0, 0.65);
+  animation: scan-sweep 1.6s cubic-bezier(0.55, 0, 0.45, 1) infinite alternate;
+}
+
+.scan-grid {
+  background-image:
+    linear-gradient(rgba(224, 74, 0, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(224, 74, 0, 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@keyframes dot-flash {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+.dot-flash { animation: dot-flash 1s ease-in-out infinite; }
+.dot-flash-2 { animation-delay: 0.2s; }
+.dot-flash-3 { animation-delay: 0.4s; }
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(28, 26, 19, 0.06),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

@@ -1,9 +1,25 @@
 import RentModal from "@/components/RentModal"
+import ItemGallery from "@/components/ItemGallery"
+import UsdEstimate from "@/components/CsprPrice"
 import { Listing } from "@/lib/types"
 import Link from "next/link"
-import { ChevronLeft, ShieldCheck } from "lucide-react"
+import { ChevronLeft, ShieldCheck, BadgeCheck, User, ExternalLink } from "lucide-react"
 
-async function getListing(id: string): Promise<Listing | null> {
+type ListingOwner = {
+  id: string
+  phone: string
+  wallet_address: string | null
+  verified: boolean
+}
+
+type ListingWithOwner = Listing & { owner?: ListingOwner | null }
+
+function maskPhone(phone: string) {
+  if (!phone || phone.length <= 4) return phone
+  return `${phone.slice(0, 3)} ••• ${phone.slice(-2)}`
+}
+
+async function getListing(id: string): Promise<ListingWithOwner | null> {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/api/listings/${id}`,
@@ -43,36 +59,11 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div className="space-y-3">
-          <div className="aspect-[4/3] bg-ink/[0.04] overflow-hidden card-log relative">
-            {listing.photos.length > 0 ? (
-              <img
-                src={listing.photos[0]}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center font-mono text-xs uppercase tracking-wide text-ink/30">
-                No photos
-              </div>
-            )}
-            <span className="absolute top-2 left-2 bg-paper2 border border-ink font-mono text-[9px] font-semibold tracking-[0.12em] uppercase px-1.5 py-0.5">
-              REF·{listing.id.slice(0, 4).toUpperCase()}
-            </span>
-          </div>
-          {listing.photos.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              {listing.photos.slice(1).map((photo, i) => (
-                <img
-                  key={i}
-                  src={photo}
-                  alt={`${listing.title} ${i + 2}`}
-                  className="w-20 h-20 object-cover border border-ink/40 flex-shrink-0 hover:border-accent transition-colors"
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <ItemGallery
+          photos={listing.photos}
+          title={listing.title}
+          refId={listing.id.slice(0, 4).toUpperCase()}
+        />
 
         <div className="space-y-6">
           <div>
@@ -88,6 +79,7 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
             <div className="flex items-baseline gap-2 font-mono">
               <span className="text-3xl font-bold text-accent">{listing.price_per_day}</span>
               <span className="text-ink/45 text-xs uppercase tracking-wide">CSPR / day</span>
+              <UsdEstimate cspr={listing.price_per_day} per="day" className="text-xs" />
             </div>
           </div>
 
@@ -102,11 +94,17 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
             <h3 className="mono-label">Pricing</h3>
             <div className="flex justify-between text-sm font-mono">
               <span className="text-ink/60">Daily rate</span>
-              <span className="text-ink font-medium">{listing.price_per_day} CSPR</span>
+              <span className="text-ink font-medium">
+                {listing.price_per_day} CSPR{" "}
+                <UsdEstimate cspr={listing.price_per_day} className="text-[11px] ml-1" />
+              </span>
             </div>
             <div className="flex justify-between text-sm font-mono">
               <span className="text-ink/60">Security deposit</span>
-              <span className="text-ink font-medium">{listing.deposit_amount} CSPR</span>
+              <span className="text-ink font-medium">
+                {listing.deposit_amount} CSPR{" "}
+                <UsdEstimate cspr={listing.deposit_amount} className="text-[11px] ml-1" />
+              </span>
             </div>
             <div className="rule" />
             <p className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.06em] text-ink/45 leading-relaxed">
@@ -114,6 +112,41 @@ export default async function ItemPage(props: PageProps<"/item/[id]">) {
               Deposit locked on-chain via Casper. Released after AI damage check.
             </p>
           </div>
+
+          {listing.owner && (
+            <div className="card-log p-5">
+              <h3 className="mono-label mb-3">Listed By</h3>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 border border-ink flex items-center justify-center bg-paper shrink-0">
+                  <User className="w-5 h-5 text-ink/50" strokeWidth={1.75} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-sm text-ink/80 truncate">
+                      {maskPhone(listing.owner.phone)}
+                    </span>
+                    {listing.owner.verified && (
+                      <span className="stamp stamp-ok shrink-0">
+                        <BadgeCheck className="w-3 h-3" strokeWidth={2} />
+                        Verified
+                      </span>
+                    )}
+                  </div>
+                  {listing.owner.wallet_address && (
+                    <a
+                      href={`https://testnet.cspr.live/account/${listing.owner.wallet_address}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 font-mono text-[10px] uppercase tracking-[0.06em] text-accent/80 hover:text-accent transition-colors mt-0.5"
+                    >
+                      On-chain account
+                      <ExternalLink className="w-2.5 h-2.5" strokeWidth={1.75} />
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {listing.is_available && (
             <RentModal

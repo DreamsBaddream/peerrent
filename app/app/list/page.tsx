@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import PhotoUpload from "@/components/PhotoUpload"
+import UsdEstimate from "@/components/CsprPrice"
 
 export default function ListPage() {
   const router = useRouter()
@@ -113,6 +114,9 @@ export default function ListPage() {
                   CSPR
                 </span>
               </div>
+              {parseFloat(pricePerDay) > 0 && (
+                <UsdEstimate cspr={parseFloat(pricePerDay)} per="day" className="text-[10px] mt-1.5 block" />
+              )}
             </div>
             <div>
               <label className="block text-xs text-ink/60 mb-1.5 font-medium">
@@ -133,6 +137,9 @@ export default function ListPage() {
                   CSPR
                 </span>
               </div>
+              {parseFloat(depositAmount) > 0 && (
+                <UsdEstimate cspr={parseFloat(depositAmount)} className="text-[10px] mt-1.5 block" />
+              )}
             </div>
           </div>
         </div>

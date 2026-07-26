@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
-import { Wallet, Loader2 } from "lucide-react"
+import { Wallet, Loader2, Lock } from "lucide-react"
 
 declare global {
   interface Window {
@@ -64,22 +64,16 @@ export default function WalletButton() {
     }
   }
 
-  function disconnect() {
-    sessionStorage.setItem(WALLET_DISCONNECTED, "1")
-    setPublicKey(null)
-    localStorage.removeItem("casper_public_key")
-  }
-
   if (publicKey) {
     return (
-      <button
-        onClick={disconnect}
-        className="flex items-center gap-1.5 px-3 py-1.5 border border-ink bg-paper font-mono text-[11px] font-medium text-ink/75 hover:text-err hover:border-err transition-colors"
-        title="Click to disconnect wallet"
+      <div
+        className="flex items-center gap-1.5 px-3 py-1.5 border border-ink bg-paper font-mono text-[11px] font-medium text-ink/75"
+        title="Wallet linked to this account"
       >
         <Wallet className="w-3 h-3 text-accent" strokeWidth={2} />
         {truncateKey(publicKey)}
-      </button>
+        <Lock className="w-3 h-3 text-ink/40" strokeWidth={2} />
+      </div>
     )
   }
 

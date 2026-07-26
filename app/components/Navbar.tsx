@@ -35,17 +35,13 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
 
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <svg viewBox="0 0 22 22" width="20" height="20" fill="none" aria-hidden="true">
-            <circle cx="11" cy="3.5" r="2.5" fill="#e04a00" />
-            <circle cx="19" cy="16" r="2.5" fill="#1c1a13" />
-            <circle cx="3" cy="16" r="2.5" fill="#1c1a13" />
-            <path
-              d="M11 6L18 13.5M11 6L4 13.5M4 13.5L18 13.5"
-              stroke="#1c1a13"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-            />
-          </svg>
+          <img
+            src="/logo.png"
+            alt="PeerRent"
+            width={26}
+            height={26}
+            className="w-[26px] h-[26px] object-contain shrink-0"
+          />
           <span className="font-display text-[15px] tracking-tight leading-none">
             PEER<span className="text-accent">RENT</span>
           </span>

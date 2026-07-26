@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { X } from "lucide-react"
+import { useCsprPrice, formatUsd } from "@/components/CsprPrice"
 
 interface RentModalProps {
   listingId: string
@@ -12,8 +13,6 @@ interface RentModalProps {
   ownerId?: string
 }
 
-const CSPR_USD_FALLBACK = 0.02
-
 export default function RentModal({
   listingId,
   pricePerDay,
@@ -21,25 +20,45 @@ export default function RentModal({
   ownerId,
 }: RentModalProps) {
   const router = useRouter()
+  const { usd: csprUsd } = useCsprPrice()
   const [open, setOpen] = useState(false)
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [loading, setLoading] = useState(false)
   const [publicKey, setPublicKey] = useState<string | null>(null)
-  const [csprUsd, setCsprUsd] = useState<number>(CSPR_USD_FALLBACK)
   const [userId, setUserId] = useState<string | null>(null)
 
   useEffect(() => {
     setPublicKey(localStorage.getItem("casper_public_key"))
     setUserId(localStorage.getItem("user_id"))
-    fetch("https://api.coingecko.com/api/v3/simple/price?ids=casper-network&vs_currencies=usd")
-      .then((r) => r.json())
-      .then((d) => {
-        const price = d?.["casper-network"]?.usd
-        if (typeof price === "number" && price > 0) setCsprUsd(price)
-      })
-      .catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false)
+    }
+    document.addEventListener("keydown", onKey)
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.removeEventListener("keydown", onKey)
+      document.body.style.overflow = ""
+    }
+  }, [open])
+
+  function applyPreset(numDays: number) {
+    const start = new Date()
+    const end = new Date()
+    end.setDate(end.getDate() + numDays)
+    setStartDate(start.toISOString().split("T")[0])
+    setEndDate(end.toISOString().split("T")[0])
+  }
+
+  const presets = [
+    { label: "1 day", days: 1 },
+    { label: "3 days", days: 3 },
+    { label: "1 week", days: 7 },
+  ]
 
   const days =
     startDate && endDate
@@ -119,7 +138,12 @@ export default function RentModal({
           className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-ink/50 p-4"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false) }}
         >
-          <div className="card-log p-6 w-full max-w-md bg-paper2">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="Rental order"
+            className="card-log p-6 w-full max-w-md bg-paper2"
+          >
             <div className="flex items-center justify-between mb-6">
               <h2 className="font-display text-ink text-base uppercase tracking-tight">
                 Rental Order
@@ -134,6 +158,29 @@ export default function RentModal({
             </div>
 
             <div className="space-y-4">
+              <div>
+                <label className="mono-label block mb-1.5">Quick Select</label>
+                <div className="flex gap-2">
+                  {presets.map((p) => {
+                    const isActive = days === p.days && !!startDate
+                    return (
+                      <button
+                        key={p.days}
+                        type="button"
+                        onClick={() => applyPreset(p.days)}
+                        className={`flex-1 font-mono text-[11px] font-semibold uppercase tracking-[0.08em] py-2 border transition-all ${
+                          isActive
+                            ? "bg-ink border-ink text-paper2 shadow-[2px_2px_0_#e04a00]"
+                            : "border-ink/35 text-ink/60 hover:border-ink hover:text-ink"
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="mono-label block mb-1.5">Start Date</label>
@@ -166,7 +213,7 @@ export default function RentModal({
                     <div className="text-right">
                       <span className="text-ink">{days * pricePerDay} CSPR</span>
                       <span className="block text-[10px] text-ink/40">
-                        ~${(days * pricePerDay * csprUsd).toFixed(2)}
+                        ~{formatUsd(days * pricePerDay * csprUsd)}
                       </span>
                     </div>
                   </div>
@@ -175,7 +222,7 @@ export default function RentModal({
                     <div className="text-right">
                       <span className="text-ink">{depositAmount} CSPR</span>
                       <span className="block text-[10px] text-ink/40">
-                        ~${(depositAmount * csprUsd).toFixed(2)}
+                        ~{formatUsd(depositAmount * csprUsd)}
                       </span>
                     </div>
                   </div>
@@ -185,7 +232,7 @@ export default function RentModal({
                     <div className="text-right">
                       <span className="text-accent font-bold text-sm">{total} CSPR</span>
                       <span className="block text-[10px] text-ink/40">
-                        ~${(total * csprUsd).toFixed(2)} USD
+                        ~{formatUsd(total * csprUsd)} USD
                       </span>
                     </div>
                   </div>

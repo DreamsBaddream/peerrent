@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import PhotoUpload from "@/components/PhotoUpload"
 import { Rental } from "@/lib/types"
-import { Star } from "lucide-react"
+import { Star, ScanSearch, ShieldCheck, ShieldAlert } from "lucide-react"
 
 interface ReturnResult {
   damage_detected: boolean
@@ -17,6 +17,7 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
   const [rentalId, setRentalId] = useState<string>("")
   const [rental, setRental] = useState<Rental | null>(null)
   const [afterPhotos, setAfterPhotos] = useState<File[]>([])
+  const [afterPreviews, setAfterPreviews] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<ReturnResult | null>(null)
   const [rating, setRating] = useState(0)
@@ -29,6 +30,12 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
       fetchRental(id)
     })
   }, [])
+
+  useEffect(() => {
+    const urls = afterPhotos.map((f) => URL.createObjectURL(f))
+    setAfterPreviews(urls)
+    return () => urls.forEach((u) => URL.revokeObjectURL(u))
+  }, [afterPhotos])
 
   async function fetchRental(id: string) {
     try {
@@ -114,7 +121,7 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
         </div>
       ) : null}
 
-      {!result && (
+      {!result && !loading && (
         <div className="card-log p-6 space-y-5">
           <div>
             <p className="mono-label mb-4">
@@ -124,11 +131,50 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
           </div>
           <button
             onClick={handleReturn}
-            disabled={loading || !afterPhotos.length}
+            disabled={!afterPhotos.length}
             className="btn-accent w-full py-3.5"
           >
-            {loading ? "Analyzing with AI…" : "Submit Return"}
+            Submit for AI Inspection
           </button>
+        </div>
+      )}
+
+      {loading && (
+        <div className="card-log p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <ScanSearch className="w-4 h-4 text-accent" strokeWidth={2} />
+            <p className="mono-label text-ink/70">AI Inspection in progress</p>
+          </div>
+
+          <div className="relative aspect-[4/3] bg-ink overflow-hidden border border-ink">
+            {afterPreviews[0] ? (
+              <img
+                src={afterPreviews[0]}
+                alt="Scanning"
+                className="w-full h-full object-cover opacity-90"
+              />
+            ) : (
+              <div className="w-full h-full bg-ink/90" />
+            )}
+            <div className="absolute inset-0 scan-grid" />
+            <div className="scan-line" />
+            <div className="absolute bottom-0 inset-x-0 bg-ink/80 px-3 py-2 flex items-center gap-2">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-paper2/90">
+                Comparing against pickup condition
+              </span>
+              <span className="flex gap-1 ml-auto">
+                <span className="w-1 h-1 bg-accent dot-flash" />
+                <span className="w-1 h-1 bg-accent dot-flash dot-flash-2" />
+                <span className="w-1 h-1 bg-accent dot-flash dot-flash-3" />
+              </span>
+            </div>
+          </div>
+
+          <div className="mt-4 space-y-1.5 font-mono text-[11px] text-ink/50">
+            <p>▸ Reading after-photos…</p>
+            <p>▸ Detecting new damage vs. pickup state…</p>
+            <p>▸ Computing on-chain deposit verdict…</p>
+          </div>
         </div>
       )}
 
@@ -138,12 +184,17 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
             result.damage_detected ? "bg-err/[0.04]" : "bg-ok/[0.04]"
           }`}>
             <div
-              className={`stamp-verdict inline-block border-[3px] font-display uppercase text-xl md:text-2xl px-5 py-2.5 tracking-tight mb-4 ${
+              className={`stamp-verdict inline-flex items-center gap-2 border-[3px] font-display uppercase text-xl md:text-2xl px-5 py-2.5 tracking-tight mb-4 ${
                 result.damage_detected
                   ? "border-err text-err"
                   : "border-ok text-ok"
               }`}
             >
+              {result.damage_detected ? (
+                <ShieldAlert className="w-6 h-6" strokeWidth={2.25} />
+              ) : (
+                <ShieldCheck className="w-6 h-6" strokeWidth={2.25} />
+              )}
               {result.damage_detected ? "Damage Detected" : "Passed Inspection"}
             </div>
             <p className={`font-mono text-xs uppercase tracking-[0.1em] mb-3 ${
@@ -158,6 +209,34 @@ export default function ReturnPage(props: PageProps<"/return/[id]">) {
               </p>
             )}
           </div>
+
+          {(rental?.before_photos?.[0] || afterPreviews[0]) && (
+            <div className="card-log p-5">
+              <h3 className="mono-label mb-3">Inspection Evidence</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/45 mb-1.5">Pickup</p>
+                  <div className="aspect-[4/3] border border-ink/40 overflow-hidden bg-ink/[0.04]">
+                    {rental?.before_photos?.[0] ? (
+                      <img src={rental.before_photos[0]} alt="Before" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-mono text-[10px] uppercase text-ink/30">n/a</div>
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-ink/45 mb-1.5">Return</p>
+                  <div className={`aspect-[4/3] border overflow-hidden bg-ink/[0.04] ${result.damage_detected ? "border-err" : "border-ok"}`}>
+                    {afterPreviews[0] ? (
+                      <img src={afterPreviews[0]} alt="After" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center font-mono text-[10px] uppercase text-ink/30">n/a</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {!ratingDone ? (
             <div className="card-log p-6">

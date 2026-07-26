@@ -1,5 +1,6 @@
 import Link from "next/link"
 import { ImageIcon } from "lucide-react"
+import UsdEstimate from "@/components/CsprPrice"
 
 interface ItemCardProps {
   id: string
@@ -26,6 +27,7 @@ export default function ItemCard({
             <img
               src={photo}
               alt={title}
+              loading="lazy"
               className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500 ease-out"
             />
           ) : (
@@ -44,13 +46,19 @@ export default function ItemCard({
             {title}
           </h3>
           <div className="flex items-end justify-between font-mono">
-            <div className="flex items-baseline gap-1">
-              <span className="text-accent text-base font-bold">{price_per_day}</span>
-              <span className="text-ink/45 text-[10px] uppercase tracking-wide">CSPR/day</span>
+            <div>
+              <div className="flex items-baseline gap-1">
+                <span className="text-accent text-base font-bold">{price_per_day}</span>
+                <span className="text-ink/45 text-[10px] uppercase tracking-wide">CSPR/day</span>
+              </div>
+              <UsdEstimate cspr={price_per_day} per="day" className="text-[10px]" />
             </div>
-            <span className="text-ink/40 text-[10px] uppercase tracking-wide">
-              dep {deposit_amount}
-            </span>
+            <div className="text-right">
+              <span className="block text-ink/40 text-[10px] uppercase tracking-wide">
+                dep {deposit_amount}
+              </span>
+              <UsdEstimate cspr={deposit_amount} className="text-[10px]" />
+            </div>
           </div>
         </div>
       </div>

@@ -25,6 +25,8 @@ export default function SignupPage() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const streamRef = useRef<MediaStream | null>(null)
+  const phoneRef = useRef<HTMLInputElement>(null)
+  const otpRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (step !== "selfie") return
@@ -32,6 +34,17 @@ export default function SignupPage() {
     startCamera()
     return () => stopCamera()
   }, [step])
+
+  useEffect(() => {
+    if (step === "phone") phoneRef.current?.focus()
+    if (step === "otp") otpRef.current?.focus()
+  }, [step])
+
+  useEffect(() => {
+    if (step === "otp" && otp.length === 6 && !loading) {
+      handleVerifyOtp()
+    }
+  }, [otp, step])
 
   async function handleSendOtp(e: React.FormEvent) {
     e.preventDefault()
@@ -57,9 +70,9 @@ export default function SignupPage() {
     }
   }
 
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault()
-    if (otp.length !== 6) return
+  async function handleVerifyOtp(e?: React.FormEvent) {
+    e?.preventDefault()
+    if (otp.length !== 6 || loading) return
     setLoading(true)
     try {
       const res = await fetch("/api/auth/verify-otp", {
@@ -203,6 +216,7 @@ export default function SignupPage() {
               <div>
                 <label className="mono-label block mb-1.5">Phone Number</label>
                 <input
+                  ref={phoneRef}
                   type="tel"
                   placeholder="+1 555 000 0000"
                   value={phone}
@@ -226,8 +240,10 @@ export default function SignupPage() {
               <div>
                 <label className="mono-label block mb-1.5">6-Digit Code</label>
                 <input
+                  ref={otpRef}
                   type="text"
                   inputMode="numeric"
+                  autoComplete="one-time-code"
                   maxLength={6}
                   placeholder="000000"
                   value={otp}
